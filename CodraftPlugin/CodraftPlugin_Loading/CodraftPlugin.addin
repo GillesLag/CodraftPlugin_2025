@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+	<AddIn Type="Application">
+		<Name>CodraftPlugin</Name>
+		<Assembly>CodraftPlugin/CodraftPlugin_Loading.dll</Assembly>
+		<AddInId>02DB8279-D075-40CF-BBD7-AD91B8755395</AddInId>
+		<FullClassName>CodraftPlugin_Loading.LoadTabAndButtons</FullClassName>
+		<VendorId>Codraft</VendorId>
+		<VendorDescription>Codraft www.codraft.be</VendorDescription>
+	</AddIn>
+</RevitAddIns>
