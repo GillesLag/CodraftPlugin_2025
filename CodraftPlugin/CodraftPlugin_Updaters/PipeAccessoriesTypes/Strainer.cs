@@ -7,24 +7,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CodraftPlugin_PipeAccessoriesWPF;
+using Newtonsoft.Json.Linq;
 
 namespace CodraftPlugin_Updaters.PipeAccessoriesTypes
 {
     public class Strainer : BaseAccessory
     {
-        public Strainer(FamilyInstance accessory, Document doc, string databaseMapPath) : base(accessory, doc, databaseMapPath)
+        public Strainer(FamilyInstance accessory, Document doc, string databaseMapPath, JObject file) : base(accessory, doc, databaseMapPath, file)
         {
             this.Query = $"SELECT * " +
-                $"FROM BMP_StrainerTbl " +
-                $"WHERE Manufacturer = \"{this.Fabrikant}\" " +
-                $"AND Type = \"{this.Type}\" " +
-                $"AND D1 = {this.Dn}";
+                $"FROM {(string)parameterConfiguration["parameters"]["strainer"]["property_17"]["database"]} " +
+                $"WHERE {(string)parameterConfiguration["parameters"]["strainer"]["property_11"]["database"]} = \"{this.Fabrikant}\" " +
+                $"AND {(string)parameterConfiguration["parameters"]["strainer"]["property_12"]["database"]} = \"{this.Type}\" " +
+                $"AND {(string)parameterConfiguration["parameters"]["strainer"]["property_18"]["database"]} = {this.Dn}";
 
             this.QueryCount = $"SELECT COUNT(*) " +
-                $"FROM BMP_StrainerTbl " +
-                $"WHERE Manufacturer = \"{this.Fabrikant}\" " +
-                $"AND Type = \"{this.Type}\" " +
-                $"AND D1 = {this.Dn}";
+                $"FROM {(string)parameterConfiguration["parameters"]["strainer"]["property_17"]["database"]} " +
+                $"WHERE {(string)parameterConfiguration["parameters"]["strainer"]["property_11"]["database"]} = \"{this.Fabrikant}\" " +
+                $"AND {(string)parameterConfiguration["parameters"]["strainer"]["property_12"]["database"]} = \"{this.Type}\" " +
+                $"AND {(string)parameterConfiguration["parameters"]["strainer"]["property_18"]["database"]} = {this.Dn}";
         }
 
         public override bool? GetParams()
@@ -48,7 +49,7 @@ namespace CodraftPlugin_Updaters.PipeAccessoriesTypes
 
                 string typeName = this.ToString();
                 string name = typeName.Substring(typeName.LastIndexOf('.') + 1);
-                MainWindow accessoryWindow = new MainWindow(PipeAccessory, name, ConnectionString, Query, DatabaseFilePath, CallingParams);
+                MainWindow accessoryWindow = new MainWindow(PipeAccessory, name, ConnectionString, Query, DatabaseFilePath, CallingParams, parameterConfiguration);
                 accessoryWindow.ShowDialog();
 
                 if (accessoryWindow.hasChosenAccessory)

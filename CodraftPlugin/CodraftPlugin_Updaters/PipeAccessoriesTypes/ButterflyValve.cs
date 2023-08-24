@@ -7,24 +7,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CodraftPlugin_PipeAccessoriesWPF;
+using Newtonsoft.Json.Linq;
 
 namespace CodraftPlugin_Updaters.PipeAccessoriesTypes
 {
     public class ButterflyValve : BaseAccessory
     {
-        public ButterflyValve(FamilyInstance accessory, Document doc, string databaseMapPath) : base(accessory, doc, databaseMapPath)
+        public ButterflyValve(FamilyInstance accessory, Document doc, string databaseMapPath, JObject file) : base(accessory, doc, databaseMapPath, file)
         {
             this.Query = $"SELECT * " +
-                $"FROM BMP_ValveButterflyTbl " +
-                $"WHERE Manufacturer = \"{this.Fabrikant}\" " +
-                $"AND Type = \"{this.Type}\" " +
-                $"AND D1 = {this.Dn}";
+                $"FROM {(string)parameterConfiguration["parameters"]["butterflyValve"]["property_19"]["database"]} " +
+                $"WHERE {(string)parameterConfiguration["parameters"]["butterflyValve"]["property_13"]["database"]} = \"{this.Fabrikant}\" " +
+                $"AND {(string)parameterConfiguration["parameters"]["butterflyValve"]["property_14"]["database"]} = \"{this.Type}\" " +
+                $"AND {(string)parameterConfiguration["parameters"]["butterflyValve"]["property_3"]["database"]} = {this.Dn}";
 
             this.QueryCount = $"SELECT COUNT(*) " +
-                $"FROM BMP_ValveButterflyTbl " +
-                $"WHERE Manufacturer = \"{this.Fabrikant}\" " +
-                $"AND Type = \"{this.Type}\" " +
-                $"AND D1 = {this.Dn}";
+                $"FROM {(string)parameterConfiguration["parameters"]["butterflyValve"]["property_19"]["database"]} " +
+                $"WHERE {(string)parameterConfiguration["parameters"]["butterflyValve"]["property_13"]["database"]} = \"{this.Fabrikant}\" " +
+                $"AND {(string)parameterConfiguration["parameters"]["butterflyValve"]["property_14"]["database"]} = \"{this.Type}\" " +
+                $"AND {(string)parameterConfiguration["parameters"]["butterflyValve"]["property_3"]["database"]} = {this.Dn}";
         }
 
         public override bool? GetParams()
@@ -46,7 +47,7 @@ namespace CodraftPlugin_Updaters.PipeAccessoriesTypes
 
                 string typeName = this.ToString();
                 string name = typeName.Substring(typeName.LastIndexOf('.') + 1);
-                MainWindow accessoryWindow = new MainWindow(PipeAccessory, name, ConnectionString, Query, DatabaseFilePath, CallingParams);
+                MainWindow accessoryWindow = new MainWindow(PipeAccessory, name, ConnectionString, Query, DatabaseFilePath, CallingParams, parameterConfiguration);
                 accessoryWindow.ShowDialog();
 
                 if (accessoryWindow.hasChosenAccessory)

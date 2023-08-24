@@ -2,9 +2,13 @@
 using Autodesk.Revit.DB.Plumbing;
 using Autodesk.Revit.UI;
 using CodraftPlugin_Library;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Principal;
 using System.Windows.Forms;
 
 namespace CodraftPlugin_Updaters
@@ -13,6 +17,8 @@ namespace CodraftPlugin_Updaters
     {
         private Guid _guid = new Guid("119D4855-D967-4DD0-AE69-0DB8B0C06296");
         public UpdaterId Id { get; set; }
+        private JObject parameterConfiguration;
+        private string globalParameterName;
 
         public Pipes(AddInId addinId)
         {
@@ -22,6 +28,39 @@ namespace CodraftPlugin_Updaters
         public void Execute(UpdaterData data)
         {
             Document doc = data.GetDocument();
+
+            string projectMapPath;
+            string databasesMapPath;
+            string insulationDatabasePath;
+            string textFilesMapPath;
+
+            // Check globalparameter for projectfoldermap
+            ElementId globalParameter = GlobalParametersManager.FindByName(doc, globalParameterName);
+
+            if (globalParameter == ElementId.InvalidElementId)
+            {
+                projectMapPath = GlobalParameters.SetGlobalParameter(doc, globalParameterName);
+            }
+            else
+            {
+                GlobalParameter revitProjectMapParameter = (GlobalParameter)doc.GetElement(globalParameter);
+                projectMapPath = ((StringParameterValue)revitProjectMapParameter.GetValue()).Value;
+            }
+
+            if (projectMapPath.Contains("(user)"))
+            {
+                string username = WindowsIdentity.GetCurrent().Name.Split('\\')[1];
+                projectMapPath = projectMapPath.Replace("(user)", username);
+            }
+
+            databasesMapPath = projectMapPath + @"\RevitDatabases\";
+            textFilesMapPath = projectMapPath + @"\RevitTextFiles\";
+            insulationDatabasePath = databasesMapPath + @"Isolatie.accdb";
+
+            using (StreamReader reader = File.OpenText(textFilesMapPath + "configuration.json"))
+            {
+                parameterConfiguration = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
+            }
 
             // List of all pipesystems.
             List<PipingSystemType> pipingSystems = new FilteredElementCollector(doc)
@@ -71,7 +110,7 @@ namespace CodraftPlugin_Updaters
 
                     // Set all parameters.
                     pipe.SetSystemType(systemIds[systemNames.IndexOf(systemName)]);
-                    ElementSettings.SetCodraftParametersPipe(pipe);
+                    ElementSettings.SetCodraftParametersPipe(pipe, parameterConfiguration);
                     pipe.LookupParameter("COD_Isolatie").Set(1);
                 }
                 catch (Exception ex)
@@ -129,7 +168,7 @@ namespace CodraftPlugin_Updaters
                     || data.IsChangeTriggered(pipeId, Element.GetChangeTypeParameter(new ElementId(BuiltInParameter.RBS_PIPE_OUTER_DIAMETER))))
                 {
                     // Set all parameters.
-                    ElementSettings.SetCodraftParametersPipe(pipe);
+                    ElementSettings.SetCodraftParametersPipe(pipe, parameterConfiguration);
                 }
             }
         }

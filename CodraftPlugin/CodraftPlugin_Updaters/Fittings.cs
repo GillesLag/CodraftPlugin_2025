@@ -8,6 +8,9 @@ using System;
 using System.Security.Principal;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace CodraftPlugin_Updaters
 {
@@ -22,6 +25,7 @@ namespace CodraftPlugin_Updaters
         private Tap tap;
         private Guid failureGuidPipeFittings = new Guid("45DFD462-806E-4B43-AA78-657851A2A38B");
         private string globalParameterName = "RevitProjectMap";
+        private Newtonsoft.Json.Linq.JObject parameterConfiguration;
 
         private readonly string[] fittingTypes =
         {
@@ -69,6 +73,11 @@ namespace CodraftPlugin_Updaters
             insulationDatabasePath = databasesMapPath + @"Isolatie.accdb";
             textFilesMapPath = projectMapPath + @"\RevitTextFiles\";
 
+            using (StreamReader reader = File.OpenText(textFilesMapPath + "configuration.json"))
+            {
+                parameterConfiguration = (Newtonsoft.Json.Linq.JObject)JToken.ReadFrom(new JsonTextReader(reader));
+            }
+
             FailureDefinitionId warning = new FailureDefinitionId(failureGuidPipeFittings);
             FailureMessage fm = new FailureMessage(warning);
 
@@ -93,7 +102,7 @@ namespace CodraftPlugin_Updaters
                         case "Elbow":
 
                             // Create elbow object
-                            elbow = new Elbow(fitting, doc, databasesMapPath, textFilesMapPath);
+                            elbow = new Elbow(fitting, doc, databasesMapPath, textFilesMapPath, parameterConfiguration);
 
                             if (elbow.SystemType == "Undefined")
                                 continue;
@@ -103,7 +112,7 @@ namespace CodraftPlugin_Updaters
 
                             if (elbowParams != null)
                                 // set the parameters for the elbow in the document
-                                ElementSettings.SetCodraftParametersElbow(elbowParams, fitting);
+                                ElementSettings.SetCodraftParametersElbow(elbowParams, fitting, parameterConfiguration);
 
                             // check if the insulation updater is enabled
                             if (!UpdaterRegistry.IsUpdaterEnabled(new Insulation(doc.Application.ActiveAddInId).Id))
@@ -129,7 +138,7 @@ namespace CodraftPlugin_Updaters
 
                         case "Tee":
 
-                            tee = new Tee(fitting, doc, databasesMapPath, textFilesMapPath);
+                            tee = new Tee(fitting, doc, databasesMapPath, textFilesMapPath, parameterConfiguration);
 
                             if (tee.SystemType == "Undefined")
                                 continue;
@@ -137,14 +146,14 @@ namespace CodraftPlugin_Updaters
                             List<object> teeParams = tee.GetParamsFromDB();
 
                             if (teeParams != null)
-                                ElementSettings.SetCodraftParametersTee(teeParams, fitting);
+                                ElementSettings.SetCodraftParametersTee(teeParams, fitting, parameterConfiguration);
 
                             break;
 
                         case "Transition_Concentrisch":
                         case "Transition_Excentrisch":
 
-                            transition = new Transition(fitting, doc, databasesMapPath, textFilesMapPath);
+                            transition = new Transition(fitting, doc, databasesMapPath, textFilesMapPath, parameterConfiguration);
 
                             if (transition.SystemType == "Undefined")
                                 continue;
@@ -152,7 +161,7 @@ namespace CodraftPlugin_Updaters
                             List<object> transParams = transition.GetParamsFromDB();
 
                             if (transParams != null)
-                                ElementSettings.SetCodraftParametersTransition(transParams, fitting, transition.switchNds, transition.Excentrisch);
+                                ElementSettings.SetCodraftParametersTransition(transParams, fitting, transition.switchNds, transition.Excentrisch, parameterConfiguration);
 
                             if (!UpdaterRegistry.IsUpdaterEnabled(new Insulation(doc.Application.ActiveAddInId).Id))
                                 continue;
@@ -174,7 +183,7 @@ namespace CodraftPlugin_Updaters
 
                         case "Tap":
 
-                            tap = new Tap(fitting, doc, databasesMapPath, textFilesMapPath);
+                            tap = new Tap(fitting, doc, databasesMapPath, textFilesMapPath, parameterConfiguration);
 
                             if (tap.SystemType == "Undefined")
                                 continue;
@@ -182,7 +191,7 @@ namespace CodraftPlugin_Updaters
                             List<object> tapParams = tap.GetParamsFromDB();
 
                             if (tapParams != null)
-                                ElementSettings.SetCodraftParametersTap(tapParams, fitting);
+                                ElementSettings.SetCodraftParametersTap(tapParams, fitting, parameterConfiguration);
 
                             break;
                     }
@@ -197,27 +206,27 @@ namespace CodraftPlugin_Updaters
                     {
                         case "Elbow":
                             // set parameters for a wrong fitting.
-                            ElementSettings.ElbowDoesNotExist(fitting);
+                            ElementSettings.ElbowDoesNotExist(fitting, parameterConfiguration);
 
                             break;
 
                         case "Tee":
 
                             // set parameters for a wrong fitting.
-                            ElementSettings.TeeDoesNotExist(fitting);
+                            ElementSettings.TeeDoesNotExist(fitting, parameterConfiguration);
                             break;
 
                         case "Transition_Excentrisch":
                         case "Transition_Concentrisch":
 
                             // set parameter for a wrong fitting
-                            ElementSettings.TransitionDoesNotExist(fitting);
+                            ElementSettings.TransitionDoesNotExist(fitting, parameterConfiguration);
                             break;
 
                         case "Tap":
 
                             // set parameter for a wrong fitting
-                            ElementSettings.TapDoesNotExist(fitting);
+                            ElementSettings.TapDoesNotExist(fitting, parameterConfiguration);
                             break;
 
                         default:
@@ -273,7 +282,7 @@ namespace CodraftPlugin_Updaters
                     {
                         case "Elbow":
 
-                            elbow = new Elbow(fitting, doc, databasesMapPath, textFilesMapPath);
+                            elbow = new Elbow(fitting, doc, databasesMapPath, textFilesMapPath, parameterConfiguration);
 
                             if (elbow.SystemType == "Undefined")
                                 continue;
@@ -283,7 +292,7 @@ namespace CodraftPlugin_Updaters
                             if (parameters == null || elbow.AreParamsTheSame(parameters))
                                 continue;
 
-                            ElementSettings.SetCodraftParametersElbow(parameters, fitting);
+                            ElementSettings.SetCodraftParametersElbow(parameters, fitting, parameterConfiguration);
 
                             if (!UpdaterRegistry.IsUpdaterEnabled(new Insulation(doc.Application.ActiveAddInId).Id) || fitting.LookupParameter("COD_Isolatie").AsInteger() == 0)
                                 continue;
@@ -308,7 +317,7 @@ namespace CodraftPlugin_Updaters
 
                         case "Tee":
 
-                            tee = new Tee(fitting, doc, databasesMapPath, textFilesMapPath);
+                            tee = new Tee(fitting, doc, databasesMapPath, textFilesMapPath, parameterConfiguration);
 
                             if (tee.SystemType == "Undefined")
                                 continue;
@@ -318,14 +327,14 @@ namespace CodraftPlugin_Updaters
                             if (teeParams == null || tee.AreParamsTheSame(teeParams))
                                 continue;
 
-                            ElementSettings.SetCodraftParametersTee(teeParams, fitting);
+                            ElementSettings.SetCodraftParametersTee(teeParams, fitting, parameterConfiguration);
 
                             break;
 
                         case "Transition_Concentrisch":
                         case "Transition_Excentrisch":
 
-                            transition = new Transition(fitting, doc, databasesMapPath, textFilesMapPath);
+                            transition = new Transition(fitting, doc, databasesMapPath, textFilesMapPath, parameterConfiguration);
 
                             if (transition.SystemType == "Undefined")
                                 continue;
@@ -335,7 +344,7 @@ namespace CodraftPlugin_Updaters
                             if (transitionParams == null || transition.AreParamsTheSame(transitionParams, transition.switchNds))
                                 continue;
 
-                            ElementSettings.SetCodraftParametersTransition(transitionParams, fitting, transition.switchNds, transition.Excentrisch);
+                            ElementSettings.SetCodraftParametersTransition(transitionParams, fitting, transition.switchNds, transition.Excentrisch, parameterConfiguration);
 
                             if (!UpdaterRegistry.IsUpdaterEnabled(new Insulation(doc.Application.ActiveAddInId).Id) || fitting.LookupParameter("COD_Isolatie").AsInteger() == 0)
                                 continue;
@@ -360,7 +369,7 @@ namespace CodraftPlugin_Updaters
 
                         case "Tap":
 
-                            tap = new Tap(fitting, doc, databasesMapPath, textFilesMapPath);
+                            tap = new Tap(fitting, doc, databasesMapPath, textFilesMapPath, parameterConfiguration);
 
                             if (tap.SystemType == "Undefined")
                                 continue;
@@ -370,7 +379,7 @@ namespace CodraftPlugin_Updaters
                             if (tapParams == null || tap.AreParamsTheSame(tapParams))
                                 continue;
 
-                            ElementSettings.SetCodraftParametersTap(tapParams, fitting);
+                            ElementSettings.SetCodraftParametersTap(tapParams, fitting, parameterConfiguration);
 
                             break;
                     }
@@ -388,7 +397,7 @@ namespace CodraftPlugin_Updaters
                             doc.PostFailure(fm);
 
                             // set parameters for wrong fitting.
-                            ElementSettings.ElbowDoesNotExist(fitting);
+                            ElementSettings.ElbowDoesNotExist(fitting, parameterConfiguration);
 
                             break;
 
@@ -398,7 +407,7 @@ namespace CodraftPlugin_Updaters
                             // Post warning
                             doc.PostFailure(fm);
 
-                            ElementSettings.TeeDoesNotExist(fitting);
+                            ElementSettings.TeeDoesNotExist(fitting, parameterConfiguration);
 
                             break;
 
@@ -409,7 +418,7 @@ namespace CodraftPlugin_Updaters
                             // Post warning
                             doc.PostFailure(fm);
 
-                            ElementSettings.TransitionDoesNotExist(fitting);
+                            ElementSettings.TransitionDoesNotExist(fitting, parameterConfiguration);
 
                             break;
 
@@ -420,7 +429,7 @@ namespace CodraftPlugin_Updaters
                             doc.PostFailure(fm); ;
 
                             // set parameter for a wrong fitting
-                            ElementSettings.TapDoesNotExist(fitting);
+                            ElementSettings.TapDoesNotExist(fitting, parameterConfiguration);
                             break;
 
                         default:

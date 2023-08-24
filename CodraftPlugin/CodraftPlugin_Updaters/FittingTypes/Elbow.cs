@@ -2,6 +2,7 @@
 using CodraftPlugin_DAL;
 using CodraftPlugin_Exceptions;
 using CodraftPlugin_UIDatabaseWPF;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,32 +25,32 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public string StrCountSQL { get; set; }
         public string StrHoekInkortbaarSQL { get; set; }
 
-        public Elbow(FamilyInstance elbow, Document doc, string databaseMapPath, string textFilesMapPath)
-            : base(elbow, doc, databaseMapPath, textFilesMapPath)
+        public Elbow(FamilyInstance elbow, Document doc, string databaseMapPath, string textFilesMapPath, JObject file)
+            : base(elbow, doc, databaseMapPath, textFilesMapPath, file)
         {
-            this.Nd1 = Math.Round(elbow.LookupParameter("COD_c1_Nominale_diameter").AsDouble()*feetToMm).ToString();
-            this.Nd2 = Math.Round(elbow.LookupParameter("COD_c2_Nominale_diameter").AsDouble()*feetToMm).ToString();
-            this.HoekTolerantie = Math.Round(elbow.LookupParameter("Hoek_tolerantie").AsDouble() * radiansToDegrees).ToString();
-            this.Hoek = Math.Round(elbow.LookupParameter("COD_c1_Hoek").AsDouble() * radiansToDegrees).ToString();
+            this.Nd1 = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_20"]["revit"]).AsDouble() * feetToMm).ToString();
+            this.Nd2 = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_21"]["revit"]).AsDouble() * feetToMm).ToString();
+            this.HoekTolerantie = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_18"]["revit"]).AsDouble() * radiansToDegrees).ToString();
+            this.Hoek = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_19"]["revit"]).AsDouble() * radiansToDegrees).ToString();
 
             if (double.Parse(this.Hoek) > 45) this.HoekStandaard = "90";
 
             StrSQL = $"SELECT *" +
-                $" FROM BMP_ElbowTbl" +
-                $" WHERE Nominale_diameter_1 = {this.Nd1}" +
-                $" AND Nominale_diameter_2 = {this.Nd2}" +
-                $" AND Standaard_hoek = {this.HoekTolerantie};";
+                $" FROM {(string)parametersConfiguration["parameters"]["elbow"]["property_22"]["database"]}" +
+                $" WHERE {(string)parametersConfiguration["parameters"]["elbow"]["property_20"]["database"]} = {this.Nd1}" +
+                $" AND {(string)parametersConfiguration["parameters"]["elbow"]["property_21"]["database"]} = {this.Nd2}" +
+                $" AND {(string)parametersConfiguration["parameters"]["elbow"]["property_17"]["database"]} = {this.HoekTolerantie};";
 
             StrCountSQL = $"SELECT COUNT(*)" +
-                $" FROM BMP_ElbowTbl" +
-                $" WHERE Nominale_diameter_1 = {this.Nd1}" +
-                $" AND Nominale_diameter_2 = {this.Nd2}" +
-                $" AND Standaard_hoek = {this.HoekTolerantie};";
+                $" FROM {(string)parametersConfiguration["parameters"]["elbow"]["property_22"]["database"]}" +
+                $" WHERE {(string)parametersConfiguration["parameters"]["elbow"]["property_20"]["database"]} = {this.Nd1}" +
+                $" AND {(string)parametersConfiguration["parameters"]["elbow"]["property_21"]["database"]} = {this.Nd2}" +
+                $" AND {(string)parametersConfiguration["parameters"]["elbow"]["property_17"]["database"]} = {this.HoekTolerantie};";
 
-            StrHoekInkortbaarSQL = $"SELECT Hoek_inkortbaar" +
-                $" FROM BMP_ElbowTbl" +
-                $" WHERE Nominale_diameter_1 = {this.Nd1}" +
-                $" AND Nominale_diameter_2 = {this.Nd2}";
+            StrHoekInkortbaarSQL = $"SELECT {(string)parametersConfiguration["parameters"]["elbow"]["property_23"]["database"]}" +
+                $" FROM {(string)parametersConfiguration["parameters"]["elbow"]["property_22"]["database"]}" +
+                $" WHERE {(string)parametersConfiguration["parameters"]["elbow"]["property_20"]["database"]} = {this.Nd1}" +
+                $" AND {(string)parametersConfiguration["parameters"]["elbow"]["property_21"]["database"]} = {this.Nd2}";
         }
 
         /// <summary>
@@ -62,20 +63,20 @@ namespace CodraftPlugin_Updaters.FittingTypes
             if (FileOperations.IsAngleShortenable(StrHoekInkortbaarSQL, ConnectionString))
             {
                 StrSQL = $"SELECT *" +
-                    $" FROM BMP_ElbowTbl" +
-                    $" WHERE Nominale_diameter_1 = {this.Nd1}" +
-                    $" AND Nominale_diameter_2 = {this.Nd2}" +
-                    $" AND Standaard_hoek = {this.HoekStandaard};";
+                    $" FROM {(string)parametersConfiguration["parameters"]["elbow"]["property_22"]["database"]}" +
+                    $" WHERE {(string)parametersConfiguration["parameters"]["elbow"]["property_20"]["database"]} = {this.Nd1}" +
+                    $" AND {(string)parametersConfiguration["parameters"]["elbow"]["property_21"]["database"]} = {this.Nd2}" +
+                    $" AND {(string)parametersConfiguration["parameters"]["elbow"]["property_17"]["database"]} = {this.HoekStandaard};";
 
                 StrCountSQL = $"SELECT COUNT(*)" +
-                    $" FROM BMP_ElbowTbl" +
-                    $" WHERE Nominale_diameter_1 = {this.Nd1}" +
-                    $" AND Nominale_diameter_2 = {this.Nd2}" +
-                    $" AND Standaard_hoek = {this.HoekStandaard};";
+                    $" FROM {(string)parametersConfiguration["parameters"]["elbow"]["property_22"]["database"]}" +
+                    $" WHERE {(string)parametersConfiguration["parameters"]["elbow"]["property_20"]["database"]} = {this.Nd1}" +
+                    $" AND {(string)parametersConfiguration["parameters"]["elbow"]["property_21"]["database"]} = {this.Nd2}" +
+                    $" AND {(string)parametersConfiguration["parameters"]["elbow"]["property_17"]["database"]} = {this.HoekStandaard};";
             }
 
             // Check for multiple rows in database.
-            if (FileOperations.LookupElbow(StrSQL, StrCountSQL, ConnectionString, out List<object> paramList))
+            if (FileOperations.LookupElbow(StrSQL, StrCountSQL, ConnectionString, out List<object> paramList, parametersConfiguration))
             {
                 List<string> parameters = new List<string>() { Nd1, Nd2, HoekTolerantie, Fi.get_Parameter(BuiltInParameter.RBS_PIPING_SYSTEM_TYPE_PARAM).AsValueString() };
 
@@ -89,7 +90,7 @@ namespace CodraftPlugin_Updaters.FittingTypes
                     return correctList;
                 }
 
-                Window w = new UIDatabase(ConnectionString, StrSQL, Doc, Fi, TextFilesMapPath, DatabaseFilePath, RememberMeFile, parameters);
+                Window w = new UIDatabase(ConnectionString, StrSQL, Doc, Fi, TextFilesMapPath, DatabaseFilePath, RememberMeFile, parameters, parametersConfiguration);
                 w.ShowDialog();
 
                 return null;
@@ -110,25 +111,26 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public bool AreParamsTheSame(List<object> dbParams)
         {
             List<object> dbParamsCorrect = ChangeDecimalPoint(dbParams);
-            List<object> fittingParams = new List<object>();
-
-            fittingParams.Add(Math.Round(Fi.LookupParameter("COD_c1_Buitendiameter").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("COD_c2_Buitendiameter").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Center_straal").AsDouble(), 4));
-            fittingParams.Add(Convert.ToDouble(Fi.LookupParameter("Uiteinde_1_type").AsInteger()));
-            fittingParams.Add(Convert.ToDouble(Fi.LookupParameter("Uiteinde_2_type").AsInteger()));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_1_maat").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_2_maat").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_1_lengte").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_2_lengte").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Flens_dikte").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Standaard_hoek").AsDouble(), 4));
-            fittingParams.Add(Fi.LookupParameter("COD_Fabrikant").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Type").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Materiaal").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Productcode").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Omschrijving").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Beschikbaar").AsString());
+            List<object> fittingParams = new List<object>
+            {
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_1"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_2"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_3"]["revit"]).AsDouble(), 4),
+                Convert.ToDouble(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_4"]["revit"]).AsInteger()),
+                Convert.ToDouble(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_5"]["revit"]).AsInteger()),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_6"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_7"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_8"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_9"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_10"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_17"]["revit"]).AsDouble(), 4),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_11"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_12"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_13"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_14"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_15"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_16"]["revit"]).AsString()
+            };
 
             for (int i = 0; i < dbParamsCorrect.Count; i++)
             {
@@ -155,22 +157,22 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public bool IsAlreadyWrong()
         {
             if (
-                    Fi.LookupParameter("COD_Fabrikant").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Type").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Materiaal").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Productcode").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Omschrijving").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Beschikbaar").AsString() == "nee" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_11"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_12"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_13"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_14"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_15"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_16"]["revit"]).AsString() == "nee" &&
 
-                    Fi.LookupParameter("COD_c1_Buitendiameter").AsValueString() == "15" &&
-                    Fi.LookupParameter("COD_c2_Buitendiameter").AsValueString() == "15" &&
-                    Fi.LookupParameter("Center_straal").AsValueString() == "30" &&
-                    Fi.LookupParameter("Uiteinde_1_type").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_2_type").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_1_maat").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_2_maat").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_1_lengte").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_2_lengte").AsDouble() == 0
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_1"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_2"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_3"]["revit"]).AsValueString() == "30" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_4"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_5"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_6"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_7"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_8"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_9"]["revit"]).AsDouble() == 0
                 )
                 return true;
 

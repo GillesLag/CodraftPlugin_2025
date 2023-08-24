@@ -1,4 +1,5 @@
 ﻿using Autodesk.Revit.DB;
+using Newtonsoft.Json.Linq;
 
 namespace CodraftPlugin_Updaters.FittingTypes
 {
@@ -13,8 +14,9 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public Document Doc { get; set; }
         public ElementId Id { get; set; }
         public string SystemType { get; set; }
+        public JObject parametersConfiguration { get; set; }
 
-        public BaseFitting(FamilyInstance fitting, Document doc, string databaseMapPath, string textFilesMapPath)
+        public BaseFitting(FamilyInstance fitting, Document doc, string databaseMapPath, string textFilesMapPath, JObject file)
         {
             this.Fi = fitting;
             this.Doc = doc;
@@ -23,9 +25,10 @@ namespace CodraftPlugin_Updaters.FittingTypes
 
             this.TextFilesMapPath = textFilesMapPath;
             this.RememberMeFile = textFilesMapPath + "RememberMe_New.txt";
-            this.DatabaseFile = this.SystemType + ".mdb";
+            this.DatabaseFile = this.SystemType + ".accdb";
             this.ConnectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={databaseMapPath}{this.DatabaseFile}";
             this.DatabaseFilePath = databaseMapPath + this.DatabaseFile;
+            this.parametersConfiguration = file;
         }
     }
 }

@@ -3,6 +3,7 @@ using Autodesk.Revit.DB.Plumbing;
 using CodraftPlugin_DAL;
 using CodraftPlugin_Exceptions;
 using CodraftPlugin_UIDatabaseWPF;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,10 +20,10 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public string StrCountSQL { get; set; }
         public double MaxDiameter { get; set; }
 
-        public Tap(FamilyInstance tap, Document doc, string databaseMapPath, string textFilesMapPath)
-            : base(tap, doc, databaseMapPath, textFilesMapPath)
+        public Tap(FamilyInstance tap, Document doc, string databaseMapPath, string textFilesMapPath, JObject file)
+            : base(tap, doc, databaseMapPath, textFilesMapPath, file)
         {
-            this.Nd1 = Math.Round(tap.LookupParameter("COD_c1_Nominale_diameter").AsDouble()*feetToMm).ToString();
+            this.Nd1 = Math.Round(tap.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_10"]["revit"]).AsDouble() * feetToMm).ToString();
 
             var connectors = tap.MEPModel.ConnectorManager.Connectors.Cast<IConnector>();
 
@@ -45,18 +46,18 @@ namespace CodraftPlugin_Updaters.FittingTypes
             this.MaxDiameter = diameters.Max();
 
             this.StrSQL = $"SELECT *" +
-                $" FROM BMP_StubTbl" +
-                $" WHERE BMP_StubTbl.Nominale_diameter={this.Nd1};";
+                $" FROM {(string)parametersConfiguration["parameters"]["tap"]["property_12"]["database"]}" +
+                $" WHERE {(string)parametersConfiguration["parameters"]["tap"]["property_10"]["database"]} = {this.Nd1};";
 
             this.StrCountSQL = $"SELECT COUNT(*)" +
-                $" FROM BMP_StubTbl" +
-                $" WHERE BMP_StubTbl.Nominale_diameter={this.Nd1};";
+                $" FROM {(string)parametersConfiguration["parameters"]["tap"]["property_12"]["database"]}" +
+                $" WHERE {(string)parametersConfiguration["parameters"]["tap"]["property_10"]["database"]} = {this.Nd1};";
         }
 
         public List<object> GetParamsFromDB()
         {
             // Check for multiple rows in database.
-            if (FileOperations.LookupTap(StrSQL, StrCountSQL, ConnectionString, MaxDiameter, out List<object> paramList))
+            if (FileOperations.LookupTap(StrSQL, StrCountSQL, ConnectionString, MaxDiameter, out List<object> paramList, parametersConfiguration))
             {
                 List<string> parameters = new List<string>() { Nd1, Fi.get_Parameter(BuiltInParameter.RBS_PIPING_SYSTEM_TYPE_PARAM).AsValueString() };
 
@@ -70,7 +71,7 @@ namespace CodraftPlugin_Updaters.FittingTypes
                     return correctList;
                 }
 
-                Window w = new UIDatabase(ConnectionString, StrSQL, Doc, Fi, TextFilesMapPath, DatabaseFilePath, RememberMeFile, parameters, false, 0 , MaxDiameter);
+                Window w = new UIDatabase(ConnectionString, StrSQL, Doc, Fi, TextFilesMapPath, DatabaseFilePath, RememberMeFile, parameters, parametersConfiguration, false, 0 , MaxDiameter);
                 w.ShowDialog();
 
                 return null;
@@ -86,17 +87,18 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public bool AreParamsTheSame(List<object> dbParams)
         {
             List<object> dbParamsCorrect = ChangeDecimalPoint(dbParams);
-            List<object> fittingParams = new List<object>();
-
-            fittingParams.Add(Math.Round(Fi.LookupParameter("COD_c1_Buitendiameter").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Lengte").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Lengte_waarde").AsDouble(), 4));
-            fittingParams.Add(Fi.LookupParameter("COD_Fabrikant").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Type").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Materiaal").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Productcode").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Omschrijving").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Beschikbaar").AsString());
+            List<object> fittingParams = new List<object>
+            {
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_1"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_2"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_3"]["revit"]).AsDouble(), 4),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_4"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_5"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_6"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_7"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_8"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_9"]["revit"]).AsString()
+            };
 
             for (int i = 0; i < dbParamsCorrect.Count; i++)
             {
@@ -119,16 +121,16 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public bool IsAlreadyWrong()
         {
             if (
-                    Fi.LookupParameter("COD_Fabrikant").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Type").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Materiaal").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Productcode").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Omschrijving").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Beschikbaar").AsString() == "nee" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_4"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_5"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_6"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_7"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_8"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_9"]["revit"]).AsString() == "nee" &&
 
-                    Fi.LookupParameter("COD_c1_Buitendiameter").AsValueString() == "15" &&
-                    Fi.LookupParameter("Lengte").AsValueString() == "15" &&
-                    Fi.LookupParameter("Lengte_waarde").AsValueString() == "15"
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_1"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_2"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tap"]["property_3"]["revit"]).AsValueString() == "15"
                 )
                 return true;
 

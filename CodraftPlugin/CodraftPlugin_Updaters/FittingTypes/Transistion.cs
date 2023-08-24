@@ -2,6 +2,7 @@
 using CodraftPlugin_DAL;
 using CodraftPlugin_Exceptions;
 using CodraftPlugin_UIDatabaseWPF;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +22,11 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public string StrCountSQL { get; set; }
         public bool switchNds { get; set; }
 
-        public Transition(FamilyInstance transistion, Document doc, string databaseMapPath, string textFilesMapPath)
-            : base(transistion, doc, databaseMapPath, textFilesMapPath)
+        public Transition(FamilyInstance transistion, Document doc, string databaseMapPath, string textFilesMapPath, JObject file)
+            : base(transistion, doc, databaseMapPath, textFilesMapPath, file)
         {
-            double nd1 = Math.Round(transistion.LookupParameter("COD_c1_Nominale_diameter").AsDouble()*feetToMm);
-            double nd2 = Math.Round(transistion.LookupParameter("COD_c2_Nominale_diameter").AsDouble()*feetToMm);
+            double nd1 = Math.Round(transistion.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_18"]["revit"]).AsDouble() * feetToMm);
+            double nd2 = Math.Round(transistion.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_19"]["revit"]).AsDouble() * feetToMm);
 
             if (nd1 > nd2)
             {
@@ -40,26 +41,26 @@ namespace CodraftPlugin_Updaters.FittingTypes
                 switchNds = true;
             }
 
-            this.Excentrisch = transistion.LookupParameter("COD_Excentrisch").AsInteger();
+            this.Excentrisch = transistion.LookupParameter((string)file["parameters"]["transistion"]["property_20"]["revit"]).AsInteger();
 
             StrSQL = $"SELECT *" +
-                $" FROM BMP_TransitionTbl" +
-                $" WHERE Nominale_diameter_1 = {this.Nd1}" +
-                $" AND Nominale_diameter_2 = {this.Nd2}" +
-                $" AND Excentrisch = \"{this.Excentrisch}\";";
+                $" FROM {(string)parametersConfiguration["parameters"]["transistion"]["property_23"]["database"]}" +
+                $" WHERE {(string)parametersConfiguration["parameters"]["transistion"]["property_18"]["database"]} = {this.Nd1}" +
+                $" AND {(string)parametersConfiguration["parameters"]["transistion"]["property_19"]["database"]} = {this.Nd2}" +
+                $" AND {(string)parametersConfiguration["parameters"]["transistion"]["property_20"]["database"]} = {this.Excentrisch};";
 
             StrCountSQL = $"SELECT COUNT(*)" +
-                $" FROM BMP_TransitionTbl" +
-                $" WHERE Nominale_diameter_1 = {this.Nd1}" +
-                $" AND Nominale_diameter_2 = {this.Nd2}" +
-                $" AND Excentrisch = \"{this.Excentrisch}\";";
+                $" FROM {(string)parametersConfiguration["parameters"]["transistion"]["property_23"]["database"]}" +
+                $" WHERE {(string)parametersConfiguration["parameters"]["transistion"]["property_18"]["database"]} = {this.Nd1}" +
+                $" AND {(string)parametersConfiguration["parameters"]["transistion"]["property_19"]["database"]} = {this.Nd2}" +
+                $" AND {(string)parametersConfiguration["parameters"]["transistion"]["property_20"]["database"]} = {this.Excentrisch};";
 
         }
 
         public List<object> GetParamsFromDB()
         {
             // Check for multiple rows in database.
-            if (FileOperations.LookupTransistion(StrSQL, StrCountSQL, ConnectionString, out List<object> paramList))
+            if (FileOperations.LookupTransistion(StrSQL, StrCountSQL, ConnectionString, out List<object> paramList, parametersConfiguration))
             {
                 List<string> parameters = new List<string>() { Nd1, Nd2, Excentrisch.ToString(), Fi.get_Parameter(BuiltInParameter.RBS_PIPING_SYSTEM_TYPE_PARAM).AsValueString() };
 
@@ -78,7 +79,7 @@ namespace CodraftPlugin_Updaters.FittingTypes
                     return correctList;
                 }
 
-                Window w = new UIDatabase(ConnectionString, StrSQL, Doc, Fi, TextFilesMapPath, DatabaseFilePath, RememberMeFile, parameters, switchNds, Excentrisch);
+                Window w = new UIDatabase(ConnectionString, StrSQL, Doc, Fi, TextFilesMapPath, DatabaseFilePath, RememberMeFile, parameters, parametersConfiguration, switchNds, Excentrisch);
                 w.ShowDialog();
 
                 return null;
@@ -98,43 +99,43 @@ namespace CodraftPlugin_Updaters.FittingTypes
 
             if (!switchNds)
             {
-                fittingParams.Add(Math.Round(Fi.LookupParameter("COD_c1_Buitendiameter").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("COD_c2_Buitendiameter").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Lengte").AsDouble(), 4));
-                fittingParams.Add(Convert.ToDouble(Fi.LookupParameter("Uiteinde_1_type").AsInteger()));
-                fittingParams.Add(Convert.ToDouble(Fi.LookupParameter("Uiteinde_2_type").AsInteger()));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_1_maat").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_2_maat").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_1_lengte").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_2_lengte").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Flens_dikte_1").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Flens_dikte_2").AsDouble(), 4));
-                fittingParams.Add(Fi.LookupParameter("COD_Fabrikant").AsString());
-                fittingParams.Add(Fi.LookupParameter("COD_Type").AsString());
-                fittingParams.Add(Fi.LookupParameter("COD_Materiaal").AsString());
-                fittingParams.Add(Fi.LookupParameter("COD_Productcode").AsString());
-                fittingParams.Add(Fi.LookupParameter("COD_Omschrijving").AsString());
-                fittingParams.Add(Fi.LookupParameter("COD_Beschikbaar").AsString());
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_1"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_2"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_3"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Convert.ToDouble(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_4"]["revit"]).AsInteger()));
+                fittingParams.Add(Convert.ToDouble(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_5"]["revit"]).AsInteger()));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_6"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_7"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_8"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_9"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_10"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_11"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_12"]["revit"]).AsString());
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_13"]["revit"]).AsString());
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_14"]["revit"]).AsString());
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_15"]["revit"]).AsString());
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_16"]["revit"]).AsString());
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_17"]["revit"]).AsString());
             }
             else
             {
-                fittingParams.Add(Math.Round(Fi.LookupParameter("COD_c2_Buitendiameter").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("COD_c1_Buitendiameter").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Lengte").AsDouble(), 4));
-                fittingParams.Add(Convert.ToDouble(Fi.LookupParameter("Uiteinde_2_type").AsInteger()));
-                fittingParams.Add(Convert.ToDouble(Fi.LookupParameter("Uiteinde_1_type").AsInteger()));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_2_maat").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_1_maat").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_2_lengte").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_1_lengte").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Flens_dikte_2").AsDouble(), 4));
-                fittingParams.Add(Math.Round(Fi.LookupParameter("Flens_dikte_1").AsDouble(), 4));
-                fittingParams.Add(Fi.LookupParameter("COD_Fabrikant").AsString());
-                fittingParams.Add(Fi.LookupParameter("COD_Type").AsString());
-                fittingParams.Add(Fi.LookupParameter("COD_Materiaal").AsString());
-                fittingParams.Add(Fi.LookupParameter("COD_Productcode").AsString());
-                fittingParams.Add(Fi.LookupParameter("COD_Omschrijving").AsString());
-                fittingParams.Add(Fi.LookupParameter("COD_Beschikbaar").AsString());
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_2"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_1"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_3"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Convert.ToDouble(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_5"]["revit"]).AsInteger()));
+                fittingParams.Add(Convert.ToDouble(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_4"]["revit"]).AsInteger()));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_7"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_6"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_9"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_8"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_11"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_10"]["revit"]).AsDouble(), 4));
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_12"]["revit"]).AsString());
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_13"]["revit"]).AsString());
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_14"]["revit"]).AsString());
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_15"]["revit"]).AsString());
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_16"]["revit"]).AsString());
+                fittingParams.Add(Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_17"]["revit"]).AsString());
             }
 
 
@@ -159,22 +160,22 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public bool IsAlreadyWrong()
         {
             if (
-                    Fi.LookupParameter("COD_Fabrikant").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Type").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Materiaal").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Productcode").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Omschrijving").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Beschikbaar").AsString() == "nee" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_12"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_13"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_14"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_15"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_16"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_17"]["revit"]).AsString() == "nee" &&
 
-                    Fi.LookupParameter("COD_c1_Buitendiameter").AsValueString() == "15" &&
-                    Fi.LookupParameter("COD_c2_Buitendiameter").AsValueString() == "15" &&
-                    Fi.LookupParameter("Lengte").AsValueString() == "15" &&
-                    Fi.LookupParameter("Uiteinde_1_type").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_2_type").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_1_maat").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_2_maat").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_1_lengte").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_2_lengte").AsDouble() == 0
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_1"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_2"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_3"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_4"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_5"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_6"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_7"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_8"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["transistion"]["property_9"]["revit"]).AsDouble() == 0
                 )
                 return true;
 

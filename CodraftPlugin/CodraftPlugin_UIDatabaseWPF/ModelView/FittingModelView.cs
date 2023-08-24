@@ -10,6 +10,8 @@ using System.Data.OleDb;
 using System.Windows;
 using System.Windows.Input;
 using Autodesk.Revit.UI;
+using System.Xml.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace CodraftPlugin_UIDatabaseWPF.ModelView
 {
@@ -28,6 +30,7 @@ namespace CodraftPlugin_UIDatabaseWPF.ModelView
         private string rememberMeFile;
         private List<string> parameters;
         private double maxDiameter;
+        private JObject paramterConfiguration;
 
         #endregion
 
@@ -55,7 +58,7 @@ namespace CodraftPlugin_UIDatabaseWPF.ModelView
         #region Constructors
 
         public FittingModelView(string connectionString, string databaseFilePath, string rememberMeFilePath, string strSQL, FamilyInstance fitting,
-            List<string> parameters, bool switchNd, int excentrisch, double maxDiameter = 0)
+            List<string> parameters, bool switchNd, int excentrisch, JObject file, double maxDiameter = 0)
         {
             this.connectionString = connectionString;
             this.databaseFilePath = databaseFilePath;
@@ -66,6 +69,7 @@ namespace CodraftPlugin_UIDatabaseWPF.ModelView
             this._switchNd = switchNd;
             this._excentrisch = excentrisch;
             this.maxDiameter = maxDiameter;
+            this.paramterConfiguration = file;
 
             FillList();
         }
@@ -195,7 +199,7 @@ namespace CodraftPlugin_UIDatabaseWPF.ModelView
                     paramList.Add(elbow.Omschrijving);
                     paramList.Add(elbow.Beschikbaar);
 
-                    ElementSettings.SetCodraftParametersElbow(paramList, this.fittingModel);
+                    ElementSettings.SetCodraftParametersElbow(paramList, this.fittingModel, paramterConfiguration);
                     break;
 
                 case "Tee":
@@ -226,7 +230,7 @@ namespace CodraftPlugin_UIDatabaseWPF.ModelView
                     paramList.Add(tee.Omschrijving);
                     paramList.Add(tee.Beschikbaar);
 
-                    ElementSettings.SetCodraftParametersTee(paramList, this.fittingModel);
+                    ElementSettings.SetCodraftParametersTee(paramList, this.fittingModel, paramterConfiguration);
                     break;
 
                 case "Transition_Concentrisch":
@@ -250,7 +254,7 @@ namespace CodraftPlugin_UIDatabaseWPF.ModelView
                     paramList.Add(transition.Omschrijving);
                     paramList.Add(transition.Beschikbaar);
 
-                    ElementSettings.SetCodraftParametersTransition(paramList, this.fittingModel, this._switchNd, this._excentrisch);
+                    ElementSettings.SetCodraftParametersTransition(paramList, this.fittingModel, this._switchNd, this._excentrisch, paramterConfiguration);
                     break;
 
                 case "Tap":
@@ -265,7 +269,7 @@ namespace CodraftPlugin_UIDatabaseWPF.ModelView
                     paramList.Add(tap.Omschrijving);
                     paramList.Add(tap.Beschikbaar);
 
-                    ElementSettings.SetCodraftParametersTap(paramList, this.fittingModel);
+                    ElementSettings.SetCodraftParametersTap(paramList, this.fittingModel, paramterConfiguration);
                     break;
 
                 default:

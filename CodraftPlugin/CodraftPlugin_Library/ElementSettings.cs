@@ -1,6 +1,7 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Plumbing;
 using Autodesk.Revit.UI;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,15 +17,15 @@ namespace CodraftPlugin_Library
         /// Set the parameters for a pipe element.
         /// </summary>
         /// <param name="pipe">A pipe element from the document.</param>
-        public static void SetCodraftParametersPipe(Pipe pipe)
+        public static void SetCodraftParametersPipe(Pipe pipe, JObject parameterConfiguration)
         {
             // Pipe parameters
-            string startBoven = "COD_bovenkant_buis_start";
-            string eindeBoven = "COD_bovenkant_buis_einde";
-            string startCenter = "COD_center_buis_start";
-            string eindeCenter = "COD_center_buis_einde";
-            string startOnder = "COD_onderkant_buis_start";
-            string eindeOnder = "COD_onderkant_buis_einde";
+            string startBoven = (string)parameterConfiguration["parameters"]["pipe"]["property1"];
+            string eindeBoven = (string)parameterConfiguration["parameters"]["pipe"]["property2"];
+            string startCenter = (string)parameterConfiguration["parameters"]["pipe"]["property3"];
+            string eindeCenter = (string)parameterConfiguration["parameters"]["pipe"]["property4"];
+            string startOnder = (string)parameterConfiguration["parameters"]["pipe"]["property5"];
+            string eindeOnder = (string)parameterConfiguration["parameters"]["pipe"]["property6"];
             double startOffset = pipe.get_Parameter(BuiltInParameter.RBS_START_OFFSET_PARAM).AsDouble();
             double eindeOffset = pipe.get_Parameter(BuiltInParameter.RBS_END_OFFSET_PARAM).AsDouble();
             double diameter = pipe.get_Parameter(BuiltInParameter.RBS_PIPE_OUTER_DIAMETER).AsDouble();
@@ -63,32 +64,32 @@ namespace CodraftPlugin_Library
         /// </summary>
         /// <param name="parameters"></param>
         /// <param name="fi"></param>
-        public static void SetCodraftParametersTee(List<object> parameters, FamilyInstance fi)
+        public static void SetCodraftParametersTee(List<object> parameters, FamilyInstance fi, JObject file)
         {
-            fi.LookupParameter("COD_c1_Buitendiameter").Set((double)parameters[0]);
-            fi.LookupParameter("COD_c2_Buitendiameter").Set((double)parameters[1]);
-            fi.LookupParameter("COD_c3_Buitendiameter").Set((double)parameters[2]);
-            fi.LookupParameter("Lengte_waarde").Set((double)parameters[3]);
-            fi.LookupParameter("Center_uiteinde_3_waarde").Set((double)parameters[4]);
-            fi.LookupParameter("Center_uiteinde_1_waarde").Set((double)parameters[5]);
-            fi.LookupParameter("Uiteinde_1_type").Set((double)parameters[6]);
-            fi.LookupParameter("Uiteinde_2_type").Set((double)parameters[7]);
-            fi.LookupParameter("Uiteinde_3_type").Set((double)parameters[8]);
-            fi.LookupParameter("Uiteinde_1_maat").Set((double)parameters[9]);
-            fi.LookupParameter("Uiteinde_2_maat").Set((double)parameters[10]);
-            fi.LookupParameter("Uiteinde_3_maat").Set((double)parameters[11]);
-            fi.LookupParameter("Uiteinde_1_lengte").Set((double)parameters[12]);
-            fi.LookupParameter("Uiteinde_2_lengte").Set((double)parameters[13]);
-            fi.LookupParameter("Uiteinde_3_lengte").Set((double)parameters[14]);
-            fi.LookupParameter("Flens_dikte_1").Set((double)parameters[15]);
-            fi.LookupParameter("Flens_dikte_2").Set((double)parameters[16]);
-            fi.LookupParameter("Flens_dikte_3").Set((double)parameters[17]);
-            fi.LookupParameter("COD_Fabrikant").Set((string)parameters[18]);
-            fi.LookupParameter("COD_Type").Set((string)parameters[19]);
-            fi.LookupParameter("COD_Materiaal").Set((string)parameters[20]);
-            fi.LookupParameter("COD_Productcode").Set((string)parameters[21]);
-            fi.LookupParameter("COD_Omschrijving").Set((string)parameters[22]);
-            fi.LookupParameter("COD_Beschikbaar").Set((string)parameters[23]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_1"]["revit"]).Set((double)parameters[0]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_2"]["revit"]).Set((double)parameters[1]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_3"]["revit"]).Set((double)parameters[2]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_4"]["revit"]).Set((double)parameters[3]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_5"]["revit"]).Set((double)parameters[4]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_6"]["revit"]).Set((double)parameters[5]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_7"]["revit"]).Set((double)parameters[6]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_8"]["revit"]).Set((double)parameters[7]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_9"]["revit"]).Set((double)parameters[8]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_10"]["revit"]).Set((double)parameters[9]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_11"]["revit"]).Set((double)parameters[10]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_12"]["revit"]).Set((double)parameters[11]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_13"]["revit"]).Set((double)parameters[12]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_14"]["revit"]).Set((double)parameters[13]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_15"]["revit"]).Set((double)parameters[14]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_16"]["revit"]).Set((double)parameters[15]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_17"]["revit"]).Set((double)parameters[16]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_18"]["revit"]).Set((double)parameters[17]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_19"]["revit"]).Set((string)parameters[18]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_20"]["revit"]).Set((string)parameters[19]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_21"]["revit"]).Set((string)parameters[20]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_22"]["revit"]).Set((string)parameters[21]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_23"]["revit"]).Set((string)parameters[22]);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_24"]["revit"]).Set((string)parameters[23]);
         }
 
         /// <summary>
@@ -98,48 +99,48 @@ namespace CodraftPlugin_Library
         /// <param name="fi"></param>
         /// <param name="switchNds"></param>
         /// <param name="excentrischOrConcentrisch">"1" is excentrisch "0" is concentrisch</param>
-        public static void SetCodraftParametersTransition(List<object> parameters, FamilyInstance fi, bool switchNds, int excentrischOrConcentrisch)
+        public static void SetCodraftParametersTransition(List<object> parameters, FamilyInstance fi, bool switchNds, int excentrischOrConcentrisch, JObject file)
         {
             if (!switchNds)
             {
-                fi.LookupParameter("COD_c1_Buitendiameter").Set((double)parameters[0]);
-                fi.LookupParameter("COD_c2_Buitendiameter").Set((double)parameters[1]);
-                fi.LookupParameter("Uiteinde_1_type").Set((double)parameters[3]);
-                fi.LookupParameter("Uiteinde_2_type").Set((double)parameters[4]);
-                fi.LookupParameter("Uiteinde_1_maat").Set((double)parameters[5]);
-                fi.LookupParameter("Uiteinde_2_maat").Set((double)parameters[6]);
-                fi.LookupParameter("Uiteinde_1_lengte").Set((double)parameters[7]);
-                fi.LookupParameter("Uiteinde_2_lengte").Set((double)parameters[8]);
-                fi.LookupParameter("Flens_dikte_1").Set((double)parameters[9]);
-                fi.LookupParameter("Flens_dikte_2").Set((double)parameters[10]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_1"]["revit"]).Set((double)parameters[0]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_2"]["revit"]).Set((double)parameters[1]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_4"]["revit"]).Set((double)parameters[3]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_5"]["revit"]).Set((double)parameters[4]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_6"]["revit"]).Set((double)parameters[5]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_7"]["revit"]).Set((double)parameters[6]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_8"]["revit"]).Set((double)parameters[7]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_9"]["revit"]).Set((double)parameters[8]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_10"]["revit"]).Set((double)parameters[9]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_11"]["revit"]).Set((double)parameters[10]);
             }
             else
             {
-                fi.LookupParameter("COD_c1_Buitendiameter").Set((double)parameters[1]);
-                fi.LookupParameter("COD_c2_Buitendiameter").Set((double)parameters[0]);
-                fi.LookupParameter("Uiteinde_1_type").Set((double)parameters[4]);
-                fi.LookupParameter("Uiteinde_2_type").Set((double)parameters[3]);
-                fi.LookupParameter("Uiteinde_1_maat").Set((double)parameters[6]);
-                fi.LookupParameter("Uiteinde_2_maat").Set((double)parameters[5]);
-                fi.LookupParameter("Uiteinde_1_lengte").Set((double)parameters[8]);
-                fi.LookupParameter("Uiteinde_2_lengte").Set((double)parameters[7]);
-                fi.LookupParameter("Flens_dikte_1").Set((double)parameters[10]);
-                fi.LookupParameter("Flens_dikte_2").Set((double)parameters[9]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_1"]["revit"]).Set((double)parameters[1]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_2"]["revit"]).Set((double)parameters[0]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_4"]["revit"]).Set((double)parameters[4]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_5"]["revit"]).Set((double)parameters[3]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_6"]["revit"]).Set((double)parameters[6]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_7"]["revit"]).Set((double)parameters[5]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_8"]["revit"]).Set((double)parameters[8]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_9"]["revit"]).Set((double)parameters[7]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_10"]["revit"]).Set((double)parameters[10]);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_11"]["revit"]).Set((double)parameters[9]);
             }
 
             if (excentrischOrConcentrisch == 1)
-                fi.LookupParameter("Do_not_modify_COD_Excentrisch").Set(excentrischOrConcentrisch);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_22"]["revit"]).Set(excentrischOrConcentrisch);
             else
-                fi.LookupParameter("Do_not_modify_COD_Excentrisch").Set(0);
+                fi.LookupParameter((string)file["parameters"]["transistion"]["property_22"]["revit"]).Set(0);
 
-            fi.LookupParameter("Lengte").Set((double)parameters[2]);
-            fi.LookupParameter("COD_Fabrikant").Set((string)parameters[11]);
-            fi.LookupParameter("COD_Type").Set((string)parameters[12]);
-            fi.LookupParameter("COD_Materiaal").Set((string)parameters[13]);
-            fi.LookupParameter("COD_Productcode").Set((string)parameters[14]);
-            fi.LookupParameter("COD_Omschrijving").Set((string)parameters[15]);
-            fi.LookupParameter("COD_Beschikbaar").Set((string)parameters[16]);
-            fi.LookupParameter("COD_Isolatie").Set(1);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_3"]["revit"]).Set((double)parameters[2]);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_12"]["revit"]).Set((string)parameters[11]);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_13"]["revit"]).Set((string)parameters[12]);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_14"]["revit"]).Set((string)parameters[13]);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_15"]["revit"]).Set((string)parameters[14]);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_16"]["revit"]).Set((string)parameters[15]);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_17"]["revit"]).Set((string)parameters[16]);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_21"]["revit"]).Set(1);
         }
 
         /// <summary>
@@ -168,25 +169,25 @@ namespace CodraftPlugin_Library
         /// </summary>
         /// <param name="parameters">List with all parameters for an elbow.</param>
         /// <param name="fi">An elbow element from the document.</param>
-        public static void SetCodraftParametersElbow(List<object> parameters, FamilyInstance fi)
+        public static void SetCodraftParametersElbow(List<object> parameters, FamilyInstance fi, JObject file)
         {
-            fi.LookupParameter("COD_c1_Buitendiameter").Set((double)parameters[0]);
-            fi.LookupParameter("COD_c2_Buitendiameter").Set((double)parameters[1]);
-            fi.LookupParameter("Center_straal").Set((double)parameters[2]);
-            fi.LookupParameter("Uiteinde_1_type").Set((double)parameters[3]);
-            fi.LookupParameter("Uiteinde_2_type").Set((double)parameters[4]);
-            fi.LookupParameter("Uiteinde_1_maat").Set((double)parameters[5]);
-            fi.LookupParameter("Uiteinde_2_maat").Set((double)parameters[6]);
-            fi.LookupParameter("Uiteinde_1_lengte").Set((double)parameters[7]);
-            fi.LookupParameter("Uiteinde_2_lengte").Set((double)parameters[8]);
-            fi.LookupParameter("Flens_dikte").Set((double)parameters[9]);
-            fi.LookupParameter("Standaard_hoek").Set((double)parameters[10] / radsToDegrees);
-            fi.LookupParameter("COD_Fabrikant").Set((string)parameters[11]);
-            fi.LookupParameter("COD_Type").Set((string)parameters[12]);
-            fi.LookupParameter("COD_Materiaal").Set((string)parameters[13]);
-            fi.LookupParameter("COD_Productcode").Set((string)parameters[14]);
-            fi.LookupParameter("COD_Omschrijving").Set((string)parameters[15]);
-            fi.LookupParameter("COD_Beschikbaar").Set((string)parameters[16]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_1"]["revit"]).Set((double)parameters[0]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_2"]["revit"]).Set((double)parameters[1]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_3"]["revit"]).Set((double)parameters[2]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_4"]["revit"]).Set((double)parameters[3]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_5"]["revit"]).Set((double)parameters[4]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_6"]["revit"]).Set((double)parameters[5]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_7"]["revit"]).Set((double)parameters[6]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_8"]["revit"]).Set((double)parameters[7]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_9"]["revit"]).Set((double)parameters[8]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_10"]["revit"]).Set((double)parameters[9]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_17"]["revit"]).Set((double)parameters[10] / radsToDegrees);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_11"]["revit"]).Set((string)parameters[11]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_12"]["revit"]).Set((string)parameters[12]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_13"]["revit"]).Set((string)parameters[13]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_14"]["revit"]).Set((string)parameters[14]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_15"]["revit"]).Set((string)parameters[15]);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_16"]["revit"]).Set((string)parameters[16]);
             fi.LookupParameter("COD_Isolatie").Set(1);
         }
 
@@ -195,114 +196,114 @@ namespace CodraftPlugin_Library
         /// </summary>
         /// <param name="parameters">List with all parameters for a tap</param>
         /// <param name="fi">A tap element from the document.</param>
-        public static void SetCodraftParametersTap(List<object> parameters, FamilyInstance fi)
+        public static void SetCodraftParametersTap(List<object> parameters, FamilyInstance fi, JObject file)
         {
-            fi.LookupParameter("COD_c1_Buitendiameter").Set((double)parameters[0]);
-            fi.LookupParameter("Lengte").Set((double)parameters[1]);
-            fi.LookupParameter("Lengte_waarde").Set((double)parameters[2]);
-            fi.LookupParameter("COD_Fabrikant").Set((string)parameters[3]);
-            fi.LookupParameter("COD_Type").Set((string)parameters[4]);
-            fi.LookupParameter("COD_Materiaal").Set((string)parameters[5]);
-            fi.LookupParameter("COD_Productcode").Set((string)parameters[6]);
-            fi.LookupParameter("COD_Omschrijving").Set((string)parameters[7]);
-            fi.LookupParameter("COD_Beschikbaar").Set((string)parameters[8]);
-            fi.LookupParameter("COD_Isolatie").Set(1);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_1"]["revit"]).Set((double)parameters[0]);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_2"]["revit"]).Set((double)parameters[1]);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_3"]["revit"]).Set((double)parameters[2]);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_4"]["revit"]).Set((string)parameters[3]);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_5"]["revit"]).Set((string)parameters[4]);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_6"]["revit"]).Set((string)parameters[5]);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_7"]["revit"]).Set((string)parameters[6]);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_8"]["revit"]).Set((string)parameters[7]);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_9"]["revit"]).Set((string)parameters[8]);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_11"]["revit"]).Set(1);
         }
 
         /// <summary>
         /// Set the parameters for an elbow fitting that does not exist in the database.
         /// </summary>
         /// <param name="fi">Elbow fitting from the document.</param>
-        public static void ElbowDoesNotExist(FamilyInstance fi)
+        public static void ElbowDoesNotExist(FamilyInstance fi, JObject file)
         {
-            fi.LookupParameter("COD_Fabrikant").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Type").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Materiaal").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Productcode").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Omschrijving").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Beschikbaar").Set("nee");
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_11"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_12"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_13"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_14"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_15"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_16"]["revit"]).Set("nee");
 
-            fi.LookupParameter("COD_c1_Buitendiameter").Set(15 / feetToMm);
-            fi.LookupParameter("COD_c2_Buitendiameter").Set(15 / feetToMm);
-            fi.LookupParameter("Center_straal").Set(30 / feetToMm);
-            fi.LookupParameter("Uiteinde_1_type").Set(0);
-            fi.LookupParameter("Uiteinde_2_type").Set(0);
-            fi.LookupParameter("Uiteinde_1_maat").Set(0);
-            fi.LookupParameter("Uiteinde_2_maat").Set(0);
-            fi.LookupParameter("Uiteinde_1_lengte").Set(0);
-            fi.LookupParameter("Uiteinde_2_lengte").Set(0);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_1"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_2"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_3"]["revit"]).Set(30 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_4"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_5"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_6"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_7"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_8"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["elbow"]["property_9"]["revit"]).Set(0);
         }
 
         /// <summary>
         /// Set the parameter for a tapfitting that does not exist in the database.
         /// </summary>
         /// <param name="fi">Tap fitting from the document</param>
-        public static void TapDoesNotExist(FamilyInstance fi)
+        public static void TapDoesNotExist(FamilyInstance fi, JObject file)
         {
-            fi.LookupParameter("COD_Fabrikant").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Type").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Materiaal").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Productcode").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Omschrijving").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Beschikbaar").Set("nee");
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_4"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_5"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_6"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_7"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_8"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_9"]["revit"]).Set("nee");
 
-            fi.LookupParameter("COD_c1_Buitendiameter").Set(15 / feetToMm);
-            fi.LookupParameter("Lengte").Set(15 / feetToMm);
-            fi.LookupParameter("Lengte_waarde").Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_1"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_2"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["tap"]["property_3"]["revit"]).Set(15 / feetToMm);
         }
 
         /// <summary>
         /// Set the parameters for a tee fitting that does not exist in the database.
         /// </summary>
         /// <param name="fi">Tee fitting from the document</param>
-        public static void TeeDoesNotExist(FamilyInstance fi)
+        public static void TeeDoesNotExist(FamilyInstance fi, JObject file)
         {
-            fi.LookupParameter("COD_Fabrikant").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Type").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Materiaal").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Productcode").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Omschrijving").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Beschikbaar").Set("nee");
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_19"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_20"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_21"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_22"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_23"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_24"]["revit"]).Set("nee");
 
-            fi.LookupParameter("COD_c1_Buitendiameter").Set(15 / feetToMm);
-            fi.LookupParameter("COD_c2_Buitendiameter").Set(15 / feetToMm);
-            fi.LookupParameter("COD_c3_Buitendiameter").Set(15 / feetToMm);
-            fi.LookupParameter("Lengte_waarde").Set(15 / feetToMm);
-            fi.LookupParameter("Center_uiteinde_3_waarde").Set(15 / feetToMm);
-            fi.LookupParameter("Center_uiteinde_1_waarde").Set(15 / feetToMm);
-            fi.LookupParameter("Uiteinde_1_type").Set(0);
-            fi.LookupParameter("Uiteinde_2_type").Set(0);
-            fi.LookupParameter("Uiteinde_3_type").Set(0);
-            fi.LookupParameter("Uiteinde_1_maat").Set(0);
-            fi.LookupParameter("Uiteinde_2_maat").Set(0);
-            fi.LookupParameter("Uiteinde_3_maat").Set(0);
-            fi.LookupParameter("Uiteinde_1_lengte").Set(0);
-            fi.LookupParameter("Uiteinde_2_lengte").Set(0);
-            fi.LookupParameter("Uiteinde_3_lengte").Set(0);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_1"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_2"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_3"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_4"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_5"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_6"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_7"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_8"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_9"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_10"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_11"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_12"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_13"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_14"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["tee"]["property_15"]["revit"]).Set(0);
         }
 
         /// <summary>
         /// Set the parameters for a transition fitting that does not exist in the database.
         /// </summary>
         /// <param name="fi">Transition fitting from the document</param>
-        public static void TransitionDoesNotExist(FamilyInstance fi)
+        public static void TransitionDoesNotExist(FamilyInstance fi, JObject file)
         {
-            fi.LookupParameter("COD_Fabrikant").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Type").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Materiaal").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Productcode").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Omschrijving").Set("BESTAAT NIET!");
-            fi.LookupParameter("COD_Beschikbaar").Set("nee");
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_12"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_13"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_14"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_15"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_16"]["revit"]).Set("BESTAAT NIET!");
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_17"]["revit"]).Set("nee");
 
-            fi.LookupParameter("COD_c1_Buitendiameter").Set(15 / feetToMm);
-            fi.LookupParameter("COD_c2_Buitendiameter").Set(15 / feetToMm);
-            fi.LookupParameter("Lengte").Set(15 / feetToMm);
-            fi.LookupParameter("Uiteinde_1_type").Set(0);
-            fi.LookupParameter("Uiteinde_2_type").Set(0);
-            fi.LookupParameter("Uiteinde_1_maat").Set(0);
-            fi.LookupParameter("Uiteinde_2_maat").Set(0);
-            fi.LookupParameter("Uiteinde_1_lengte").Set(0);
-            fi.LookupParameter("Uiteinde_2_lengte").Set(0);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_1"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_2"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_3"]["revit"]).Set(15 / feetToMm);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_4"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_5"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_6"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_7"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_8"]["revit"]).Set(0);
+            fi.LookupParameter((string)file["parameters"]["transistion"]["property_9"]["revit"]).Set(0);
         }
 
         /// <summary>
@@ -412,120 +413,120 @@ namespace CodraftPlugin_Library
             return true;
         }
 
-        public static void SetCodraftParamtersStraightValve(List<object> parameters, FamilyInstance pipeAccessory)
+        public static void SetCodraftParamtersStraightValve(List<object> parameters, FamilyInstance pipeAccessory, JObject file)
         {
-            pipeAccessory.LookupParameter("Lengte").Set((double)parameters[0]);
-            pipeAccessory.LookupParameter("Hendel_lengte").Set((double)parameters[1]);
-            //pipeAccessory.LookupParameter("Hendel_breedte").Set((double)parameters[2]);
-            //pipeAccessory.LookupParameter("Hendel_hoogte").Set((double)parameters[3]);
-            pipeAccessory.LookupParameter("Motor_lengte").Set((double)parameters[4]);
-            pipeAccessory.LookupParameter("Motor_breedte").Set((double)parameters[5]);
-            pipeAccessory.LookupParameter("Motor_hoogte").Set((double)parameters[6]);
-            pipeAccessory.LookupParameter("Wormwiel_straal").Set((double)parameters[7]);
-            pipeAccessory.LookupParameter("Wormwiel_straal_staaf").Set((double)parameters[8]);
-            pipeAccessory.LookupParameter("Hoogte_operator").Set((double)parameters[9]);
-            pipeAccessory.LookupParameter("Vlinderhendel_diameter").Set((double)parameters[10]);
-            pipeAccessory.LookupParameter("Buitendiameter").Set((double)parameters[11]);
-            pipeAccessory.LookupParameter("Uiteinde_1_type").Set((int)parameters[12]);
-            pipeAccessory.LookupParameter("Uiteinde_2_type").Set((int)parameters[13]);
-            pipeAccessory.LookupParameter("Uiteinde_1_maat").Set((double)parameters[14]);
-            pipeAccessory.LookupParameter("Uiteinde_2_maat").Set((double)parameters[15]);
-            pipeAccessory.LookupParameter("Uiteinde_1_lengte").Set((double)parameters[16]);
-            pipeAccessory.LookupParameter("Uiteinde_2_lengte").Set((double)parameters[17]);
-            pipeAccessory.LookupParameter("COD_Fabrikant").Set((string)parameters[18]);
-            pipeAccessory.LookupParameter("COD_Type").Set((string)parameters[19]);
-            pipeAccessory.LookupParameter("COD_Materiaal").Set((string)parameters[20]);
-            pipeAccessory.LookupParameter("COD_Productcode").Set((string)parameters[21]);
-            pipeAccessory.LookupParameter("COD_Omschrijving").Set((string)parameters[22]);
-            pipeAccessory.LookupParameter("COD_Beschikbaar").Set((string)parameters[23]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_1"]["revit"]).Set((double)parameters[0]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_2"]["revit"]).Set((double)parameters[1]);
+            //pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_3"]["revit"]).Set((double)parameters[2]);
+            //pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_4"]["revit"]).Set((double)parameters[3]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_5"]["revit"]).Set((double)parameters[4]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_6"]["revit"]).Set((double)parameters[5]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_7"]["revit"]).Set((double)parameters[6]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_8"]["revit"]).Set((double)parameters[7]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_9"]["revit"]).Set((double)parameters[8]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_10"]["revit"]).Set((double)parameters[9]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_11"]["revit"]).Set((double)parameters[10]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_12"]["revit"]).Set((double)parameters[11]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_13"]["revit"]).Set((int)parameters[12]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_14"]["revit"]).Set((int)parameters[13]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_15"]["revit"]).Set((double)parameters[14]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_16"]["revit"]).Set((double)parameters[15]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_17"]["revit"]).Set((double)parameters[16]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_18"]["revit"]).Set((double)parameters[17]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_19"]["revit"]).Set((string)parameters[18]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_20"]["revit"]).Set((string)parameters[19]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_21"]["revit"]).Set((string)parameters[20]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_22"]["revit"]).Set((string)parameters[21]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_23"]["revit"]).Set((string)parameters[22]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["straightValve"]["property_24"]["revit"]).Set((string)parameters[23]);
         }
 
-        public static void SetCodraftParametersBalanceValve(List<object> parameters, FamilyInstance pipeAccessory)
+        public static void SetCodraftParametersBalanceValve(List<object> parameters, FamilyInstance pipeAccessory, JObject file)
         {
-            pipeAccessory.LookupParameter("Lengte").Set((double)parameters[0]);
-            pipeAccessory.LookupParameter("Buitendiameter").Set((double)parameters[1]);
-            pipeAccessory.LookupParameter("Uiteinde_1_type").Set((int)parameters[2]);
-            pipeAccessory.LookupParameter("Uiteinde_2_type").Set((int)parameters[3]);
-            pipeAccessory.LookupParameter("Uiteinde_1_maat").Set((double)parameters[4]);
-            pipeAccessory.LookupParameter("Uiteinde_2_maat").Set((double)parameters[5]);
-            pipeAccessory.LookupParameter("Uiteinde_1_lengte").Set((double)parameters[6]);
-            pipeAccessory.LookupParameter("Uiteinde_2_lengte").Set((double)parameters[7]);
-            pipeAccessory.LookupParameter("COD_Fabrikant").Set((string)parameters[8]);
-            pipeAccessory.LookupParameter("COD_Type").Set((string)parameters[9]);
-            pipeAccessory.LookupParameter("COD_Materiaal").Set((string)parameters[10]);
-            pipeAccessory.LookupParameter("COD_Productcode").Set((string)parameters[11]);
-            pipeAccessory.LookupParameter("COD_Omschrijving").Set((string)parameters[12]);
-            pipeAccessory.LookupParameter("COD_Beschikbaar").Set((string)parameters[13]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_1"]["revit"]).Set((double)parameters[0]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_2"]["revit"]).Set((double)parameters[1]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_3"]["revit"]).Set((int)parameters[2]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_4"]["revit"]).Set((int)parameters[3]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_5"]["revit"]).Set((double)parameters[4]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_6"]["revit"]).Set((double)parameters[5]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_7"]["revit"]).Set((double)parameters[6]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_8"]["revit"]).Set((double)parameters[7]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_9"]["revit"]).Set((string)parameters[8]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_10"]["revit"]).Set((string)parameters[9]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_11"]["revit"]).Set((string)parameters[10]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_12"]["revit"]).Set((string)parameters[11]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_13"]["revit"]).Set((string)parameters[12]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["balanceValve"]["property_14"]["revit"]).Set((string)parameters[13]);
         }
 
-        public static void SetCodraftParametersStrainer(List<object> parameters, FamilyInstance pipeAccessory)
+        public static void SetCodraftParametersStrainer(List<object> parameters, FamilyInstance pipeAccessory, JObject file)
         {
-            pipeAccessory.LookupParameter("Buitendiameter").Set((double)parameters[0]);
-            pipeAccessory.LookupParameter("Hoogte").Set((double)parameters[1]);
-            pipeAccessory.LookupParameter("Lengte").Set((double)parameters[2]);
-            pipeAccessory.LookupParameter("Offset").Set((double)parameters[3]);
-            pipeAccessory.LookupParameter("Uiteinde_1_type").Set((int)parameters[4]);
-            pipeAccessory.LookupParameter("Uiteinde_2_type").Set((int)parameters[5]);
-            pipeAccessory.LookupParameter("Uiteinde_1_lengte").Set((double)parameters[6]);
-            pipeAccessory.LookupParameter("Uiteinde_2_lengte").Set((double)parameters[7]);
-            pipeAccessory.LookupParameter("Uiteinde_1_maat").Set((double)parameters[8]);
-            pipeAccessory.LookupParameter("Uiteinde_2_maat").Set((double)parameters[9]);
-            pipeAccessory.LookupParameter("COD_Fabrikant").Set((string)parameters[10]);
-            pipeAccessory.LookupParameter("COD_Type").Set((string)parameters[11]);
-            pipeAccessory.LookupParameter("COD_Materiaal").Set((string)parameters[12]);
-            pipeAccessory.LookupParameter("COD_Productcode").Set((string)parameters[13]);
-            pipeAccessory.LookupParameter("COD_Omschrijving").Set((string)parameters[14]);
-            pipeAccessory.LookupParameter("COD_Beschikbaar").Set((string)parameters[15]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_1"]["revit"]).Set((double)parameters[0]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_2"]["revit"]).Set((double)parameters[1]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_3"]["revit"]).Set((double)parameters[2]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_4"]["revit"]).Set((double)parameters[3]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_5"]["revit"]).Set((int)parameters[4]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_6"]["revit"]).Set((int)parameters[5]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_7"]["revit"]).Set((double)parameters[6]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_8"]["revit"]).Set((double)parameters[7]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_9"]["revit"]).Set((double)parameters[8]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_10"]["revit"]).Set((double)parameters[9]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_11"]["revit"]).Set((string)parameters[10]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_12"]["revit"]).Set((string)parameters[11]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_13"]["revit"]).Set((string)parameters[12]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_14"]["revit"]).Set((string)parameters[13]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_15"]["revit"]).Set((string)parameters[14]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["strainer"]["property_16"]["revit"]).Set((string)parameters[15]);
         }
 
-        public static void SetCodraftParametersThreeWayGlobeValve(List<object> parameters, FamilyInstance pipeAccessory)
+        public static void SetCodraftParametersThreeWayGlobeValve(List<object> parameters, FamilyInstance pipeAccessory, JObject file)
         {
-            pipeAccessory.LookupParameter("Buitendiameter").Set((double)parameters[0]);
-            pipeAccessory.LookupParameter("Lengte").Set((double)parameters[1]);
-            pipeAccessory.LookupParameter("Lengte_3").Set((double)parameters[2]);
-            pipeAccessory.LookupParameter("Uiteinde_1_type").Set((int)parameters[3]);
-            pipeAccessory.LookupParameter("Uiteinde_2_type").Set((int)parameters[4]);
-            pipeAccessory.LookupParameter("Uiteinde_3_type").Set((int)parameters[5]);
-            pipeAccessory.LookupParameter("Uiteinde_1_lengte").Set((double)parameters[6]);
-            pipeAccessory.LookupParameter("Uiteinde_2_lengte").Set((double)parameters[7]);
-            pipeAccessory.LookupParameter("Uiteinde_3_lengte").Set((double)parameters[8]);
-            pipeAccessory.LookupParameter("Uiteinde_1_maat").Set((double)parameters[9]);
-            pipeAccessory.LookupParameter("Uiteinde_2_maat").Set((double)parameters[10]);
-            pipeAccessory.LookupParameter("Uiteinde_3_maat").Set((double)parameters[11]);
-            pipeAccessory.LookupParameter("Motor_lengte").Set((double)parameters[12]);
-            pipeAccessory.LookupParameter("Motor_breedte").Set((double)parameters[13]);
-            pipeAccessory.LookupParameter("Motor_hoogte").Set((double)parameters[14]);
-            pipeAccessory.LookupParameter("Hoogte_operator").Set((double)parameters[15]);
-            pipeAccessory.LookupParameter("Wormwiel_diameter").Set((double)parameters[16]);
-            pipeAccessory.LookupParameter("Wormwiel_lengte").Set((double)parameters[17]);
-            pipeAccessory.LookupParameter("COD_Fabrikant").Set((string)parameters[18]);
-            pipeAccessory.LookupParameter("COD_Type").Set((string)parameters[19]);
-            pipeAccessory.LookupParameter("COD_Materiaal").Set((string)parameters[20]);
-            pipeAccessory.LookupParameter("COD_Productcode").Set((string)parameters[21]);
-            pipeAccessory.LookupParameter("COD_Omschrijving").Set((string)parameters[22]);
-            pipeAccessory.LookupParameter("COD_Beschikbaar").Set((string)parameters[23]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_1"]["revit"]).Set((double)parameters[0]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_2"]["revit"]).Set((double)parameters[1]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_3"]["revit"]).Set((double)parameters[2]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_4"]["revit"]).Set((int)parameters[3]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_5"]["revit"]).Set((int)parameters[4]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_6"]["revit"]).Set((int)parameters[5]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_7"]["revit"]).Set((double)parameters[6]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_8"]["revit"]).Set((double)parameters[7]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_9"]["revit"]).Set((double)parameters[8]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_10"]["revit"]).Set((double)parameters[9]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_11"]["revit"]).Set((double)parameters[10]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_12"]["revit"]).Set((double)parameters[11]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_13"]["revit"]).Set((double)parameters[12]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_14"]["revit"]).Set((double)parameters[13]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_15"]["revit"]).Set((double)parameters[14]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_16"]["revit"]).Set((double)parameters[15]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_17"]["revit"]).Set((double)parameters[16]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_18"]["revit"]).Set((double)parameters[17]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_19"]["revit"]).Set((string)parameters[18]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_20"]["revit"]).Set((string)parameters[19]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_21"]["revit"]).Set((string)parameters[20]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_22"]["revit"]).Set((string)parameters[21]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_23"]["revit"]).Set((string)parameters[22]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["threewayGlobeValve"]["property_24"]["revit"]).Set((string)parameters[23]);
         }
 
-        public static void SetCodraftParametersButterflyValve(List<object> parameters, FamilyInstance pipeAccessory)
+        public static void SetCodraftParametersButterflyValve(List<object> parameters, FamilyInstance pipeAccessory, JObject file)
         {
-            pipeAccessory.LookupParameter("Buitendiameter_totaal").Set((double)parameters[0]);
-            pipeAccessory.LookupParameter("Lengte").Set((double)parameters[1]);
-            pipeAccessory.LookupParameter("Buitendiameter").Set((double)parameters[2]);
-            pipeAccessory.LookupParameter("Staaf_lengte").Set((double)parameters[3]);
-            pipeAccessory.LookupParameter("Hendel_lengte").Set((double)parameters[4]);
-            pipeAccessory.LookupParameter("Motor_lengte").Set((double)parameters[5]);
-            pipeAccessory.LookupParameter("Motor_hoogte").Set((double)parameters[6]);
-            pipeAccessory.LookupParameter("Motor_breedte").Set((double)parameters[7]);
-            pipeAccessory.LookupParameter("Blade_dikte").Set((double)parameters[8]);
-            pipeAccessory.LookupParameter("Blade_diameter").Set((double)parameters[9]);
-            pipeAccessory.LookupParameter("Wormwiel_diameter").Set((double)parameters[10]);
-            pipeAccessory.LookupParameter("Wormwiel_lengte").Set((double)parameters[11]);
-            pipeAccessory.LookupParameter("COD_Fabrikant").Set((string)parameters[12]);
-            pipeAccessory.LookupParameter("COD_Type").Set((string)parameters[13]);
-            pipeAccessory.LookupParameter("COD_Materiaal").Set((string)parameters[14]);
-            pipeAccessory.LookupParameter("COD_Productcode").Set((string)parameters[15]);
-            pipeAccessory.LookupParameter("COD_Omschrijving").Set((string)parameters[16]);
-            pipeAccessory.LookupParameter("COD_Beschikbaar").Set((string)parameters[17]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_1"]["revit"]).Set((double)parameters[0]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_2"]["revit"]).Set((double)parameters[1]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_3"]["revit"]).Set((double)parameters[2]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_4"]["revit"]).Set((double)parameters[3]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_5"]["revit"]).Set((double)parameters[4]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_6"]["revit"]).Set((double)parameters[5]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_7"]["revit"]).Set((double)parameters[6]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_8"]["revit"]).Set((double)parameters[7]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_9"]["revit"]).Set((double)parameters[8]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_10"]["revit"]).Set((double)parameters[9]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_11"]["revit"]).Set((double)parameters[10]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_12"]["revit"]).Set((double)parameters[11]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_13"]["revit"]).Set((string)parameters[12]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_14"]["revit"]).Set((string)parameters[13]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_15"]["revit"]).Set((string)parameters[14]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_16"]["revit"]).Set((string)parameters[15]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_17"]["revit"]).Set((string)parameters[16]);
+            pipeAccessory.LookupParameter((string)file["parameters"]["butterflyValve"]["property_18"]["revit"]).Set((string)parameters[17]);
         }
     }
 }

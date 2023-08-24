@@ -1,4 +1,5 @@
 ﻿using Autodesk.Revit.DB;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,8 +26,9 @@ namespace CodraftPlugin_Updaters.PipeAccessoriesTypes
         public List<object> RevitParameters { get; set; } = new List<object>();
         public FamilyInstance PipeAccessory { get; set; }
         public Document Doc { get; set; }
+        public JObject parameterConfiguration { get; set; }
 
-        public BaseAccessory(FamilyInstance accessory, Document doc, string databaseMapPath)
+        public BaseAccessory(FamilyInstance accessory, Document doc, string databaseMapPath, JObject file)
         {
             this.PipeAccessory = accessory;
             this.Doc = doc;
@@ -54,6 +56,8 @@ namespace CodraftPlugin_Updaters.PipeAccessoriesTypes
             CallingParams.Add(this.Fabrikant);
             CallingParams.Add(this.Type);
             CallingParams.Add(this.Dn.ToString());
+
+            parameterConfiguration = file;
         }
 
         public abstract bool? GetParams();

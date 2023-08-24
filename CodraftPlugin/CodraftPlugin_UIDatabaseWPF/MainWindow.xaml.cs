@@ -1,4 +1,5 @@
 ﻿using Autodesk.Revit.DB;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,11 +14,11 @@ namespace CodraftPlugin_UIDatabaseWPF
     public partial class UIDatabase : Window
     {
         public UIDatabase(string connectionString, string strSQL, Document doc, FamilyInstance fitting, string textFilesMapPath, string databaseFilePath, string rememberMeFilePath,
-            List<string> parameters, bool switchNd = false, int excentrisch = 0, double maxDiameter = 0)
+            List<string> parameters, JObject file, bool switchNd = false, int excentrisch = 0, double maxDiameter = 0)
         {
             InitializeComponent();
             ModelView.FittingModelView mv = new ModelView.FittingModelView(connectionString, databaseFilePath, rememberMeFilePath, strSQL, fitting, parameters,
-                switchNd, excentrisch, maxDiameter);
+                switchNd, excentrisch, file, maxDiameter);
 
             DataContext = mv;
             if (mv.CloseWindow == null)

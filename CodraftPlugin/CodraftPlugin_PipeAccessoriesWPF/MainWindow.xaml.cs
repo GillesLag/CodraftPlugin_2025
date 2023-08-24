@@ -9,6 +9,7 @@ using Autodesk.Revit.UI;
 using CodraftPlugin_PipeAccessoriesWPF.Model;
 using CodraftPlugin_Library;
 using CodraftPlugin_DAL;
+using Newtonsoft.Json.Linq;
 
 namespace CodraftPlugin_PipeAccessoriesWPF
 {
@@ -26,9 +27,10 @@ namespace CodraftPlugin_PipeAccessoriesWPF
         private List<string> _callingParams;
         private FamilyInstance _pipeAccessory;
         private List<BaseAccessory> _accessories = new List<BaseAccessory>();
+        private JObject _parameterConfiguration;
 
         public bool hasChosenAccessory { get; private set; } = false;
-        public MainWindow(FamilyInstance PipeAccessory, string name, string connectionString, string sqlQuery, string databaseFilePath, List<string> callingParams)
+        public MainWindow(FamilyInstance PipeAccessory, string name, string connectionString, string sqlQuery, string databaseFilePath, List<string> callingParams, JObject file)
         {
             InitializeComponent();
 
@@ -38,6 +40,7 @@ namespace CodraftPlugin_PipeAccessoriesWPF
             _pipeAccessory = PipeAccessory;
             _databaseFilePath = databaseFilePath;
             _callingParams = callingParams;
+            _parameterConfiguration = file;
 
             FillDataGrid();
         }
@@ -163,7 +166,7 @@ namespace CodraftPlugin_PipeAccessoriesWPF
                     paramList.Add(straightValve.Omschrijving);
                     paramList.Add(straightValve.Beschikbaar);
 
-                    ElementSettings.SetCodraftParamtersStraightValve(paramList, ba.Accessory);
+                    ElementSettings.SetCodraftParamtersStraightValve(paramList, ba.Accessory, _parameterConfiguration);
                     break;
 
                 case "BalanceValve":
@@ -183,7 +186,7 @@ namespace CodraftPlugin_PipeAccessoriesWPF
                     paramList.Add(balanceValve.Omschrijving);
                     paramList.Add(balanceValve.Beschikbaar);
 
-                    ElementSettings.SetCodraftParametersBalanceValve(paramList, ba.Accessory);
+                    ElementSettings.SetCodraftParametersBalanceValve(paramList, ba.Accessory, _parameterConfiguration);
                     break;
 
                 case "Strainer":
@@ -205,7 +208,7 @@ namespace CodraftPlugin_PipeAccessoriesWPF
                     paramList.Add(strainer.Omschrijving);
                     paramList.Add(strainer.Beschikbaar);
 
-                    ElementSettings.SetCodraftParametersStrainer(paramList, ba.Accessory);
+                    ElementSettings.SetCodraftParametersStrainer(paramList, ba.Accessory, _parameterConfiguration);
                     break;
 
                 case "ThreeWayGlobeValve":
@@ -235,7 +238,7 @@ namespace CodraftPlugin_PipeAccessoriesWPF
                     paramList.Add(threeWayGlobeValve.Omschrijving);
                     paramList.Add(threeWayGlobeValve.Beschikbaar);
 
-                    ElementSettings.SetCodraftParametersThreeWayGlobeValve(paramList, ba.Accessory);
+                    ElementSettings.SetCodraftParametersThreeWayGlobeValve(paramList, ba.Accessory, _parameterConfiguration);
                     break;
 
                 case "ButterflyValve":
@@ -259,7 +262,7 @@ namespace CodraftPlugin_PipeAccessoriesWPF
                     paramList.Add(butterflyValve.Omschrijving);
                     paramList.Add(butterflyValve.Beschikbaar);
 
-                    ElementSettings.SetCodraftParametersButterflyValve(paramList, ba.Accessory);
+                    ElementSettings.SetCodraftParametersButterflyValve(paramList, ba.Accessory, _parameterConfiguration);
                     break;
 
                 default:

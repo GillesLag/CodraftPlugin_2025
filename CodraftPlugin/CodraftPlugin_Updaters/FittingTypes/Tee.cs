@@ -2,6 +2,7 @@
 using CodraftPlugin_DAL;
 using CodraftPlugin_Exceptions;
 using CodraftPlugin_UIDatabaseWPF;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,27 +22,27 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public string StrSQL { get; set; }
         public string StrCountSQL { get; set; }
 
-        public Tee(FamilyInstance tee, Document doc, string databaseMapPath, string textFilesMapPath)
-            : base(tee, doc, databaseMapPath, textFilesMapPath)
+        public Tee(FamilyInstance tee, Document doc, string databaseMapPath, string textFilesMapPath, JObject file)
+            : base(tee, doc, databaseMapPath, textFilesMapPath, file)
         {
-            this.Nd1 = Math.Round(tee.LookupParameter("COD_c1_Nominale_diameter").AsDouble()*feetToMm).ToString();
-            this.Nd2 = Math.Round(tee.LookupParameter("COD_c2_Nominale_diameter").AsDouble() * feetToMm).ToString();
-            this.Nd3 = Math.Round(tee.LookupParameter("COD_c3_Nominale_diameter").AsDouble() * feetToMm).ToString();
-            this.Hoek = Math.Round(tee.LookupParameter("Standaard_hoek").AsDouble() * radiansToDegrees).ToString();
+            this.Nd1 = Math.Round(tee.LookupParameter((string)file["parameters"]["tee"]["property_25"]["revit"]).AsDouble() * feetToMm).ToString();
+            this.Nd2 = Math.Round(tee.LookupParameter((string)file["parameters"]["tee"]["property_26"]["revit"]).AsDouble() * feetToMm).ToString();
+            this.Nd3 = Math.Round(tee.LookupParameter((string)file["parameters"]["tee"]["property_27"]["revit"]).AsDouble() * feetToMm).ToString();
+            this.Hoek = Math.Round(tee.LookupParameter((string)file["parameters"]["tee"]["property_28"]["revit"]).AsDouble() * radiansToDegrees).ToString();
 
             StrSQL = $"SELECT *" +
-                $" FROM BMP_TeeTbl" +
-                $" WHERE Nominale_diameter_1 = {this.Nd1}" +
-                $" AND Nominale_diameter_2 = {this.Nd2}" +
-                $" AND Nominale_diameter_3 = {this.Nd3}" +
-                $" AND Standaard_hoek = {this.Hoek};";
+                $" FROM {(string)file["parameters"]["tee"]["property_29"]["database"]}" +
+                $" WHERE {(string)file["parameters"]["tee"]["property_25"]["database"]} = {this.Nd1}" +
+                $" AND {(string)file["parameters"]["tee"]["property_26"]["database"]} = {this.Nd2}" +
+                $" AND {(string)file["parameters"]["tee"]["property_27"]["database"]} = {this.Nd3}" +
+                $" AND {(string)file["parameters"]["tee"]["property_28"]["database"]} = {this.Hoek};";
 
             StrCountSQL = $"SELECT COUNT(*)" +
-                $" FROM BMP_TeeTbl" +
-                $" WHERE Nominale_diameter_1 = {this.Nd1}" +
-                $" AND Nominale_diameter_2 = {this.Nd2}" +
-                $" AND Nominale_diameter_3 = {this.Nd3}" +
-                $" AND Standaard_hoek = {this.Hoek};";
+                $" FROM {(string)file["parameters"]["tee"]["property_29"]["database"]}" +
+                $" WHERE {(string)file["parameters"]["tee"]["property_25"]["database"]} = {this.Nd1}" +
+                $" AND {(string)file["parameters"]["tee"]["property_26"]["database"]} = {this.Nd2}" +
+                $" AND {(string)file["parameters"]["tee"]["property_27"]["database"]} = {this.Nd3}" +
+                $" AND {(string)file["parameters"]["tee"]["property_28"]["database"]} = {this.Hoek};";
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public List<object> GetParamsFromDB()
         {
             // Check for multiple rows in database.
-            if (FileOperations.LookupTee(StrSQL, StrCountSQL, ConnectionString, out List<object> paramList))
+            if (FileOperations.LookupTee(StrSQL, StrCountSQL, ConnectionString, out List<object> paramList, parametersConfiguration))
             {
                 List<string> parameters = new List<string>() { Nd1, Nd2, Nd3, Hoek, Fi.get_Parameter(BuiltInParameter.RBS_PIPING_SYSTEM_TYPE_PARAM).AsValueString() };
 
@@ -66,7 +67,7 @@ namespace CodraftPlugin_Updaters.FittingTypes
                     return correctList;
                 }
 
-                Window w = new UIDatabase(ConnectionString, StrSQL, Doc, Fi, TextFilesMapPath, DatabaseFilePath, RememberMeFile, parameters);
+                Window w = new UIDatabase(ConnectionString, StrSQL, Doc, Fi, TextFilesMapPath, DatabaseFilePath, RememberMeFile, parameters, parametersConfiguration);
                 w.ShowDialog();
 
                 return null;
@@ -87,32 +88,33 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public bool AreParamsTheSame(List<object> dbParams)
         {
             List<object> dbParamsCorrect = ChangeDecimalPoint(dbParams);
-            List<object> fittingParams = new List<object>();
-
-            fittingParams.Add(Math.Round(Fi.LookupParameter("COD_c1_Buitendiameter").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("COD_c2_Buitendiameter").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("COD_c3_Buitendiameter").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Lengte_waarde").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Center_uiteinde_3_waarde").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Center_uiteinde_1_waarde").AsDouble(), 4));
-            fittingParams.Add(Convert.ToDouble(Fi.LookupParameter("Uiteinde_1_type").AsInteger()));
-            fittingParams.Add(Convert.ToDouble(Fi.LookupParameter("Uiteinde_2_type").AsInteger()));
-            fittingParams.Add(Convert.ToDouble(Fi.LookupParameter("Uiteinde_3_type").AsInteger()));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_1_maat").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_2_maat").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_3_maat").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_1_lengte").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_2_lengte").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Uiteinde_3_lengte").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Flens_dikte_1").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Flens_dikte_2").AsDouble(), 4));
-            fittingParams.Add(Math.Round(Fi.LookupParameter("Flens_dikte_3").AsDouble(), 4));
-            fittingParams.Add(Fi.LookupParameter("COD_Fabrikant").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Type").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Materiaal").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Productcode").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Omschrijving").AsString());
-            fittingParams.Add(Fi.LookupParameter("COD_Beschikbaar").AsString());
+            List<object> fittingParams = new List<object>
+            {
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_1"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_2"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_3"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_4"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_5"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_6"]["revit"]).AsDouble(), 4),
+                Convert.ToDouble(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_7"]["revit"]).AsInteger()),
+                Convert.ToDouble(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_8"]["revit"]).AsInteger()),
+                Convert.ToDouble(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_9"]["revit"]).AsInteger()),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_10"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_11"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_12"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_13"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_14"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_15"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_16"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_17"]["revit"]).AsDouble(), 4),
+                Math.Round(Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_18"]["revit"]).AsDouble(), 4),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_19"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_20"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_21"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_22"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_23"]["revit"]).AsString(),
+                Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_24"]["revit"]).AsString()
+            };
 
             for (int i = 0; i < dbParamsCorrect.Count; i++)
             {
@@ -139,28 +141,28 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public bool IsAlreadyWrong()
         {
             if (
-                    Fi.LookupParameter("COD_Fabrikant").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Type").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Materiaal").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Productcode").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Omschrijving").AsString() == "BESTAAT NIET!" &&
-                    Fi.LookupParameter("COD_Beschikbaar").AsString() == "nee" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_19"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_20"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_21"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_22"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_23"]["revit"]).AsString() == "BESTAAT NIET!" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_24"]["revit"]).AsString() == "nee" &&
 
-                    Fi.LookupParameter("COD_c1_Buitendiameter").AsValueString() == "15" &&
-                    Fi.LookupParameter("COD_c2_Buitendiameter").AsValueString() == "15" &&
-                    Fi.LookupParameter("COD_c3_Buitendiameter").AsValueString() == "15" &&
-                    Fi.LookupParameter("Center_uiteinde_3_waarde").AsValueString() == "15" &&
-                    Fi.LookupParameter("Center_uiteinde_1_waarde").AsValueString() == "15" &&
-                    Fi.LookupParameter("Lengte_waarde").AsValueString() == "15" &&
-                    Fi.LookupParameter("Uiteinde_1_type").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_2_type").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_3_type").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_1_maat").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_2_maat").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_3_maat").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_1_lengte").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_2_lengte").AsDouble() == 0 &&
-                    Fi.LookupParameter("Uiteinde_3_lengte").AsDouble() == 0
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_1"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_2"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_3"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_5"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_6"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_4"]["revit"]).AsValueString() == "15" &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_7"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_8"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_9"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_10"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_11"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_12"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_13"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_14"]["revit"]).AsDouble() == 0 &&
+                    Fi.LookupParameter((string)parametersConfiguration["parameters"]["tee"]["property_15"]["revit"]).AsDouble() == 0
                 )
                 return true;
 

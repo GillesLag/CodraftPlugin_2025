@@ -35,7 +35,7 @@ namespace CodraftPlugin_Loading
                 t.Start();
                 foreach (RevisionCloud cloud in clouds)
                 {
-                    Parameter param = cloud.get_Parameter(BuiltInParameter.DOOR_NUMBER);
+                    Parameter param = cloud.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS);
 
                     if (!string.IsNullOrWhiteSpace(param.AsString()))
                     {

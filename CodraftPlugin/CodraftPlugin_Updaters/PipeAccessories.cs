@@ -5,8 +5,11 @@ using CodraftPlugin_DAL;
 using CodraftPlugin_Exceptions;
 using CodraftPlugin_Library;
 using CodraftPlugin_Updaters.PipeAccessoriesTypes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Principal;
 
@@ -20,6 +23,7 @@ namespace CodraftPlugin_Updaters
         private string _pipeAccessoryName;
         private Guid failureGuidPipeAccessories = new Guid("4B81D4C5-185C-4830-8ECF-67370ADB06B0");
         private string globalParameterName = "RevitProjectMap";
+        private JObject parameterConfiguration;
 
         public UpdaterId Id { get; set; }
 
@@ -56,6 +60,11 @@ namespace CodraftPlugin_Updaters
             databasesMapPath = projectMapPath + @"\RevitDatabases\";
             textFilesMapPath = projectMapPath + @"\RevitTextFiles\";
 
+            using (StreamReader reader = File.OpenText(textFilesMapPath + "configuration.json"))
+            {
+                parameterConfiguration = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
+            }
+
             FailureDefinitionId warning = new FailureDefinitionId(failureGuidPipeAccessories);
             FailureMessage fm = new FailureMessage(warning);
 
@@ -87,7 +96,7 @@ namespace CodraftPlugin_Updaters
                     {
                         case "COD_KOGELKRAAN":
 
-                            StraightValve straightValve = new StraightValve(pipeAccessory, doc, databasesMapPath);
+                            StraightValve straightValve = new StraightValve(pipeAccessory, doc, databasesMapPath, parameterConfiguration);
 
                             hasParams = straightValve.GetParams();
 
@@ -103,14 +112,14 @@ namespace CodraftPlugin_Updaters
                                 if (straightValve.DatabaseParameters.Count == 0)
                                     throw new Exception("Geen parameters voor straightvalve!");
 
-                                ElementSettings.SetCodraftParamtersStraightValve(straightValve.DatabaseParameters, straightValve.PipeAccessory);
+                                ElementSettings.SetCodraftParamtersStraightValve(straightValve.DatabaseParameters, straightValve.PipeAccessory, parameterConfiguration);
                             }
 
                             break;
 
                         case "COD_INREGELAFSLUITER":
 
-                            BalanceValve balanceValve = new BalanceValve(pipeAccessory, doc, databasesMapPath);
+                            BalanceValve balanceValve = new BalanceValve(pipeAccessory, doc, databasesMapPath, parameterConfiguration);
 
                             hasParams = balanceValve.GetParams();
 
@@ -126,14 +135,14 @@ namespace CodraftPlugin_Updaters
                                 if (balanceValve.DatabaseParameters.Count == 0)
                                     throw new Exception("Geen parameters voor straightvalve!");
 
-                                ElementSettings.SetCodraftParametersBalanceValve(balanceValve.DatabaseParameters, balanceValve.PipeAccessory);
+                                ElementSettings.SetCodraftParametersBalanceValve(balanceValve.DatabaseParameters, balanceValve.PipeAccessory, parameterConfiguration);
                             }
 
                             break;
 
                         case "COD_VLINDERKLEP":
 
-                            ButterflyValve butterflyValve = new ButterflyValve(pipeAccessory, doc, databasesMapPath);
+                            ButterflyValve butterflyValve = new ButterflyValve(pipeAccessory, doc, databasesMapPath, parameterConfiguration);
 
                             hasParams = butterflyValve.GetParams();
 
@@ -149,14 +158,14 @@ namespace CodraftPlugin_Updaters
                                 if (butterflyValve.DatabaseParameters.Count == 0)
                                     throw new Exception("Geen parameters voor straightvalve!");
 
-                                ElementSettings.SetCodraftParametersButterflyValve(butterflyValve.DatabaseParameters, butterflyValve.PipeAccessory);
+                                ElementSettings.SetCodraftParametersButterflyValve(butterflyValve.DatabaseParameters, butterflyValve.PipeAccessory, parameterConfiguration);
                             }
 
                             break;
 
                         case "COD_Y-TYPEFILTER":
 
-                            Strainer strainer = new Strainer(pipeAccessory, doc, databasesMapPath);
+                            Strainer strainer = new Strainer(pipeAccessory, doc, databasesMapPath, parameterConfiguration);
 
                             hasParams = strainer.GetParams();
 
@@ -172,14 +181,14 @@ namespace CodraftPlugin_Updaters
                                 if (strainer.DatabaseParameters.Count == 0)
                                     throw new Exception("Geen parameters voor straightvalve!");
 
-                                ElementSettings.SetCodraftParametersStrainer(strainer.DatabaseParameters, strainer.PipeAccessory);
+                                ElementSettings.SetCodraftParametersStrainer(strainer.DatabaseParameters, strainer.PipeAccessory, parameterConfiguration);
                             }
 
                             break;
 
                         case "COD_3WEGGLOBEVALVE":
 
-                            ThreeWayGlobeValve threeWayGlobeValve = new ThreeWayGlobeValve(pipeAccessory, doc, databasesMapPath);
+                            ThreeWayGlobeValve threeWayGlobeValve = new ThreeWayGlobeValve(pipeAccessory, doc, databasesMapPath, parameterConfiguration);
 
                             hasParams = threeWayGlobeValve.GetParams();
 
@@ -195,7 +204,7 @@ namespace CodraftPlugin_Updaters
                                 if (threeWayGlobeValve.DatabaseParameters.Count == 0)
                                     throw new Exception("Geen parameters voor straightvalve!");
 
-                                ElementSettings.SetCodraftParametersThreeWayGlobeValve(threeWayGlobeValve.DatabaseParameters, threeWayGlobeValve.PipeAccessory);
+                                ElementSettings.SetCodraftParametersThreeWayGlobeValve(threeWayGlobeValve.DatabaseParameters, threeWayGlobeValve.PipeAccessory, parameterConfiguration);
                             }
 
                             break;
@@ -238,7 +247,7 @@ namespace CodraftPlugin_Updaters
                     {
                         case "COD_KOGELKRAAN":
 
-                            StraightValve straightValve = new StraightValve(pipeAccessory, doc, databasesMapPath);
+                            StraightValve straightValve = new StraightValve(pipeAccessory, doc, databasesMapPath, parameterConfiguration);
 
                             hasParams = straightValve.GetParams();
 
@@ -257,7 +266,7 @@ namespace CodraftPlugin_Updaters
                                 if (straightValve.DatabaseParameters.Count == 0)
                                     throw new Exception("Geen parameters voor straightvalve!");
 
-                                ElementSettings.SetCodraftParamtersStraightValve(straightValve.DatabaseParameters, straightValve.PipeAccessory);
+                                ElementSettings.SetCodraftParamtersStraightValve(straightValve.DatabaseParameters, straightValve.PipeAccessory, parameterConfiguration);
 
                             }
 
@@ -265,7 +274,7 @@ namespace CodraftPlugin_Updaters
 
                         case "COD_INREGELAFSLUITER":
 
-                            BalanceValve balanceValve = new BalanceValve(pipeAccessory, doc, databasesMapPath);
+                            BalanceValve balanceValve = new BalanceValve(pipeAccessory, doc, databasesMapPath, parameterConfiguration);
 
                             hasParams = balanceValve.GetParams();
 
@@ -284,14 +293,14 @@ namespace CodraftPlugin_Updaters
                                 if (balanceValve.DatabaseParameters.Count == 0)
                                     throw new Exception("Geen parameters voor straightvalve!");
 
-                                ElementSettings.SetCodraftParametersBalanceValve(balanceValve.DatabaseParameters, balanceValve.PipeAccessory);
+                                ElementSettings.SetCodraftParametersBalanceValve(balanceValve.DatabaseParameters, balanceValve.PipeAccessory, parameterConfiguration);
                             }
 
                             break;
 
                         case "COD_VLINDERKLEP":
 
-                            ButterflyValve butterflyValve = new ButterflyValve(pipeAccessory, doc, databasesMapPath);
+                            ButterflyValve butterflyValve = new ButterflyValve(pipeAccessory, doc, databasesMapPath, parameterConfiguration);
 
                             hasParams = butterflyValve.GetParams();
 
@@ -310,14 +319,14 @@ namespace CodraftPlugin_Updaters
                                 if (butterflyValve.DatabaseParameters.Count == 0)
                                     throw new Exception("Geen parameters voor straightvalve!");
 
-                                ElementSettings.SetCodraftParametersButterflyValve(butterflyValve.DatabaseParameters, butterflyValve.PipeAccessory);
+                                ElementSettings.SetCodraftParametersButterflyValve(butterflyValve.DatabaseParameters, butterflyValve.PipeAccessory, parameterConfiguration);
                             }
 
                             break;
 
                         case "COD_Y_TYPEFILTER":
 
-                            Strainer strainer = new Strainer(pipeAccessory, doc, databasesMapPath);
+                            Strainer strainer = new Strainer(pipeAccessory, doc, databasesMapPath, parameterConfiguration);
 
                             hasParams = strainer.GetParams();
 
@@ -336,14 +345,14 @@ namespace CodraftPlugin_Updaters
                                 if (strainer.DatabaseParameters.Count == 0)
                                     throw new Exception("Geen parameters voor straightvalve!");
 
-                                ElementSettings.SetCodraftParametersStrainer(strainer.DatabaseParameters, strainer.PipeAccessory);
+                                ElementSettings.SetCodraftParametersStrainer(strainer.DatabaseParameters, strainer.PipeAccessory, parameterConfiguration);
                             }
 
                             break;
 
                         case "COD_3WEGGLOBEVALVE":
 
-                            ThreeWayGlobeValve threeWayGlobeValve = new ThreeWayGlobeValve(pipeAccessory, doc, databasesMapPath);
+                            ThreeWayGlobeValve threeWayGlobeValve = new ThreeWayGlobeValve(pipeAccessory, doc, databasesMapPath, parameterConfiguration);
 
                             hasParams = threeWayGlobeValve.GetParams();
 
@@ -362,7 +371,7 @@ namespace CodraftPlugin_Updaters
                                 if (threeWayGlobeValve.DatabaseParameters.Count == 0)
                                     throw new Exception("Geen parameters voor straightvalve!");
 
-                                ElementSettings.SetCodraftParametersThreeWayGlobeValve(threeWayGlobeValve.DatabaseParameters, threeWayGlobeValve.PipeAccessory);
+                                ElementSettings.SetCodraftParametersThreeWayGlobeValve(threeWayGlobeValve.DatabaseParameters, threeWayGlobeValve.PipeAccessory, parameterConfiguration);
                             }
 
                             break;

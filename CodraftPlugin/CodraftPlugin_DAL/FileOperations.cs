@@ -5,6 +5,7 @@ using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using Autodesk.Revit.DB;
+using Newtonsoft.Json.Linq;
 
 namespace CodraftPlugin_DAL
 {
@@ -20,7 +21,7 @@ namespace CodraftPlugin_DAL
         /// <param name="connectionString">a string to make an OleDbConnection</param>
         /// <param name="paramList">A list with the parameters form the database</param>
         /// <returns>true if there are more then one record in the database, otherwise false</returns>
-        public static bool LookupElbow(string query, string queryCount, string connectionString, out List<object> paramList)
+        public static bool LookupElbow(string query, string queryCount, string connectionString, out List<object> paramList, JObject file)
         {
             paramList = new List<object>();
             bool hasMultipleRows;
@@ -49,23 +50,23 @@ namespace CodraftPlugin_DAL
                         {
                             while (reader.Read())
                             {
-                                paramList.Add((double)reader["Buitendiameter_1"] / feetToMm);
-                                paramList.Add((double)reader["Buitendiameter_2"] / feetToMm);
-                                paramList.Add((double)reader["Center_straal"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_1_type"]);
-                                paramList.Add((double)reader["Uiteinde_2_type"]);
-                                paramList.Add((double)reader["Uiteinde_1_maat"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_2_maat"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_1_lengte"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_2_lengte"] / feetToMm);
-                                paramList.Add((double)reader["Flens_dikte"] / feetToMm);
-                                paramList.Add((double)reader["Standaard_hoek"]);
-                                paramList.Add(reader["Fabrikant"]);
-                                paramList.Add(reader["Type"]);
-                                paramList.Add(reader["Materiaal"]);
-                                paramList.Add(reader["Productcode"]);
-                                paramList.Add(reader["Omschrijving"]);
-                                paramList.Add(reader["Beschikbaar"]);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_1"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_2"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_3"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_4"]["database"]]);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_5"]["database"]]);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_6"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_7"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_8"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_9"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_10"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["elbow"]["property_17"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["elbow"]["property_11"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["elbow"]["property_12"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["elbow"]["property_13"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["elbow"]["property_14"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["elbow"]["property_15"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["elbow"]["property_16"]["database"]]);
                             }
                         }
                     }
@@ -94,7 +95,7 @@ namespace CodraftPlugin_DAL
         /// <param name="connectionString">a string to make an OleDbConnection</param>
         /// <param name="paramList">A list with the parameters form the database</param>
         /// <returns>true if there are more then one record in the database, otherwise false</returns>
-        public static bool LookupTee(string query, string queryCount, string connectionString, out List<object> paramList)
+        public static bool LookupTee(string query, string queryCount, string connectionString, out List<object> paramList, JObject file)
         {
             paramList = new List<object>();
             bool hasMultipleRows;
@@ -123,30 +124,30 @@ namespace CodraftPlugin_DAL
                         {
                             while (reader.Read())
                             {
-                                paramList.Add((double)reader["Buitendiameter_1"] / feetToMm);
-                                paramList.Add((double)reader["Buitendiameter_2"] / feetToMm);
-                                paramList.Add((double)reader["Buitendiameter_3"] / feetToMm);
-                                paramList.Add((double)reader["Lengte"] / feetToMm);
-                                paramList.Add((double)reader["Center_uiteinde_3"] / feetToMm);
-                                paramList.Add((double)reader["Center_uiteinde_1"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_1_type"]);
-                                paramList.Add((double)reader["Uiteinde_2_type"]);
-                                paramList.Add((double)reader["Uiteinde_3_type"]);
-                                paramList.Add((double)reader["Uiteinde_1_maat"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_2_maat"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_3_maat"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_1_lengte"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_2_lengte"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_3_lengte"] / feetToMm);
-                                paramList.Add((double)reader["Flens_dikte_1"] / feetToMm);
-                                paramList.Add((double)reader["Flens_dikte_2"] / feetToMm);
-                                paramList.Add((double)reader["Flens_dikte_3"] / feetToMm);
-                                paramList.Add(reader["Fabrikant"]);
-                                paramList.Add(reader["Type"]);
-                                paramList.Add(reader["Materiaal"]);
-                                paramList.Add(reader["Productcode"]);
-                                paramList.Add(reader["Omschrijving"]);
-                                paramList.Add(reader["Beschikbaar"]);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_1"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_2"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_3"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_4"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_5"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_6"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_7"]["database"]]);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_8"]["database"]]);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_9"]["database"]]);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_10"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_11"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_12"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_13"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_14"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_15"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_16"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_17"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tee"]["property_18"]["database"]] / feetToMm);
+                                paramList.Add(reader[(string)file["parameters"]["tee"]["property_19"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["tee"]["property_20"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["tee"]["property_21"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["tee"]["property_22"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["tee"]["property_23"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["tee"]["property_24"]["database"]]);
                             }
                         }
                     }
@@ -174,7 +175,7 @@ namespace CodraftPlugin_DAL
         /// <param name="query">A query for access database</param>
         /// <param name="connectionString">A string to make an OleDbConnection</param>
         /// <returns>A list with object parameters for the transition fitting</returns>
-        public static bool LookupTransistion(string query, string queryCount, string connectionString, out List<object> paramList)
+        public static bool LookupTransistion(string query, string queryCount, string connectionString, out List<object> paramList, JObject file)
         {
             paramList = new List<object>();
             bool hasMultipleRows;
@@ -203,23 +204,23 @@ namespace CodraftPlugin_DAL
                         {
                             while (reader.Read())
                             {
-                                paramList.Add((double)reader["Buitendiameter_1"] / feetToMm);
-                                paramList.Add((double)reader["Buitendiameter_2"] / feetToMm);
-                                paramList.Add((double)reader["Lengte"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_1_type"]);
-                                paramList.Add((double)reader["Uiteinde_2_type"]);
-                                paramList.Add((double)reader["Uiteinde_1_maat"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_2_maat"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_1_lengte"] / feetToMm);
-                                paramList.Add((double)reader["Uiteinde_2_lengte"] / feetToMm);
-                                paramList.Add((double)reader["Flens_dikte_1"] / feetToMm);
-                                paramList.Add((double)reader["Flens_dikte_2"] / feetToMm);
-                                paramList.Add(reader["Fabrikant"]);
-                                paramList.Add(reader["Type"]);
-                                paramList.Add(reader["Materiaal"]);
-                                paramList.Add(reader["Productcode"]);
-                                paramList.Add(reader["Omschrijving"]);
-                                paramList.Add(reader["Beschikbaar"]);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_1"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_2"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_3"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_4"]["database"]]);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_5"]["database"]]);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_6"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_7"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_8"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_9"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_10"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["transistion"]["property_11"]["database"]] / feetToMm);
+                                paramList.Add(reader[(string)file["parameters"]["transistion"]["property_12"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["transistion"]["property_13"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["transistion"]["property_14"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["transistion"]["property_15"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["transistion"]["property_16"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["transistion"]["property_17"]["database"]]);
                             }
                         }
                     }
@@ -250,7 +251,7 @@ namespace CodraftPlugin_DAL
         /// <param name="maxDiameter"></param>
         /// <param name="paramList"></param>
         /// <returns></returns>
-        public static bool LookupTap(string query, string queryCount, string connectionString, double maxDiameter, out List<object> paramList)
+        public static bool LookupTap(string query, string queryCount, string connectionString, double maxDiameter, out List<object> paramList, JObject file)
         {
             paramList = new List<object>();
             bool hasMultipleRows;
@@ -279,15 +280,15 @@ namespace CodraftPlugin_DAL
                         {
                             while (reader.Read())
                             {
-                                paramList.Add((double)reader["Buitendiameter"] / feetToMm);
-                                paramList.Add((double)reader["Lengte"] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tap"]["property_1"]["database"]] / feetToMm);
+                                paramList.Add((double)reader[(string)file["parameters"]["tap"]["property_2"]["database"]] / feetToMm);
                                 paramList.Add(maxDiameter / 2);
-                                paramList.Add(reader["Fabrikant"]);
-                                paramList.Add(reader["Type"]);
-                                paramList.Add(reader["Materiaal"]);
-                                paramList.Add(reader["Productcode"]);
-                                paramList.Add(reader["Omschrijving"]);
-                                paramList.Add(reader["Beschikbaar"]);
+                                paramList.Add(reader[(string)file["parameters"]["tap"]["property_4"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["tap"]["property_5"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["tap"]["property_6"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["tap"]["property_7"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["tap"]["property_8"]["database"]]);
+                                paramList.Add(reader[(string)file["parameters"]["tap"]["property_9"]["database"]]);
                             }
                         }
                     }
