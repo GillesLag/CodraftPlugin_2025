@@ -123,7 +123,7 @@ namespace CodraftPlugin_UIDatabaseWPF.ModelView
                                            (double)reader["Buitendiameter_3"], (double)reader["Standaard_hoek"], (double)reader["Uiteinde_1_type"], (double)reader["Uiteinde_2_Type"],
                                            (double)reader["Uiteinde_3_Type"], (double)reader["Uiteinde_1_lengte"], (double)reader["Uiteinde_2_lengte"], (double)reader["Uiteinde_3_lengte"],
                                            (double)reader["Uiteinde_1_maat"], (double)reader["Uiteinde_2_maat"], (double)reader["Uiteinde_3_maat"], (double)reader["Lengte"], (double)reader["Center_uiteinde_1"],
-                                           (double)reader["Center_uiteinde_3"], (double)reader["Flens_dikte1"], (double)reader["Flens_dikte2"], (double)reader["Flens_dikte3"]);
+                                           (double)reader["Center_uiteinde_3"], (double)reader["Flens_dikte_1"], (double)reader["Flens_dikte_2"], (double)reader["Flens_dikte_3"]);
 
                                         break;
 
@@ -222,7 +222,7 @@ namespace CodraftPlugin_UIDatabaseWPF.ModelView
                     paramList.Add(Math.Round(tee.FlensDikte1 / feetToMm, 4));
                     paramList.Add(Math.Round(tee.FlensDikte2 / feetToMm, 4));
                     paramList.Add(Math.Round(tee.FlensDikte3 / feetToMm, 4));
-                    paramList.Add(tee.Hoek);
+                    //paramList.Add(tee.Hoek);
                     paramList.Add(tee.Fabrikant);
                     paramList.Add(tee.Type);
                     paramList.Add(tee.Materiaal);

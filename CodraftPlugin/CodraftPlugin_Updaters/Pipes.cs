@@ -18,7 +18,7 @@ namespace CodraftPlugin_Updaters
         private Guid _guid = new Guid("119D4855-D967-4DD0-AE69-0DB8B0C06296");
         public UpdaterId Id { get; set; }
         private JObject parameterConfiguration;
-        private string globalParameterName;
+        private string globalParameterName = "RevitProjectMap";
 
         public Pipes(AddInId addinId)
         {

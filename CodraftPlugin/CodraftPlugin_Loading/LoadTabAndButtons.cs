@@ -189,6 +189,8 @@ namespace CodraftPlugin_Loading
                 application.ControlledApplication.DocumentCreated += ControlledApplication_DocumentCreated;
                 application.ControlledApplication.DocumentSaving += ControlledApplication_DocumentSaving;
                 application.ControlledApplication.DocumentSavedAs += ControlledApplication_DocumentSavedAs;
+                application.ControlledApplication.DocumentSynchronizingWithCentral += ControlledApplication_DocumentSynchronizingWithCentral;
+                application.ControlledApplication.DocumentSynchronizedWithCentral += ControlledApplication_DocumentSynchronizedWithCentral;
                 return Result.Succeeded;
             }
 
@@ -196,6 +198,56 @@ namespace CodraftPlugin_Loading
             {
 
                 return Result.Failed;
+            }
+        }
+
+        private bool fittingUpdaterIsOn = false;
+        private bool pipeUpdaterIsOn = false;
+        private bool insulationUpdaterIsOn = false;
+
+        private void ControlledApplication_DocumentSynchronizedWithCentral(object sender, Autodesk.Revit.DB.Events.DocumentSynchronizedWithCentralEventArgs e)
+        {
+            var uiApp = new UIApplication(e.Document.Application);
+            Fittings fUpdater = new Fittings(e.Document.Application.ActiveAddInId);
+            Pipes pUpdater = new Pipes(e.Document.Application.ActiveAddInId);
+            Insulation iUpdater = new Insulation(e.Document.Application.ActiveAddInId);
+
+            if (fittingUpdaterIsOn)
+            {
+                ButtonHandler.EnableDisable(fUpdater, "fittingUpdater", "FittingUpdater", uiApp);
+            }
+            if (pipeUpdaterIsOn)
+            {
+                ButtonHandler.EnableDisable(pUpdater, "pipeUpdater", "PipeUpdater", uiApp);
+            }
+            if (insulationUpdaterIsOn)
+            {
+                ButtonHandler.EnableDisable(iUpdater, "insulationUpdater", "InsulationgUpdater", uiApp);
+            }
+        }
+
+        private void ControlledApplication_DocumentSynchronizingWithCentral(object sender, Autodesk.Revit.DB.Events.DocumentSynchronizingWithCentralEventArgs e)
+        {
+            var uiApp = new UIApplication(e.Document.Application);
+            Fittings fUpdater = new Fittings(e.Document.Application.ActiveAddInId);
+            Pipes pUpdater = new Pipes(e.Document.Application.ActiveAddInId);
+            Insulation iUpdater = new Insulation(e.Document.Application.ActiveAddInId);
+
+            fittingUpdaterIsOn = UpdaterRegistry.IsUpdaterEnabled(fUpdater.GetUpdaterId());
+            pipeUpdaterIsOn = UpdaterRegistry.IsUpdaterEnabled(pUpdater.GetUpdaterId());
+            insulationUpdaterIsOn = UpdaterRegistry.IsUpdaterEnabled(iUpdater.GetUpdaterId());
+
+            if (fittingUpdaterIsOn)
+            {
+                ButtonHandler.EnableDisable(fUpdater, "fittingUpdater", "FittingUpdater", uiApp);
+            }
+            if (pipeUpdaterIsOn)
+            {
+                ButtonHandler.EnableDisable(pUpdater, "pipeUpdater", "PipeUpdater", uiApp);
+            }
+            if (insulationUpdaterIsOn)
+            {
+                ButtonHandler.EnableDisable(iUpdater, "insulationUpdater", "InsulationgUpdater", uiApp);
             }
         }
 

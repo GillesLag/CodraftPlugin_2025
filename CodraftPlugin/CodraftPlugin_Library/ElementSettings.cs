@@ -20,12 +20,12 @@ namespace CodraftPlugin_Library
         public static void SetCodraftParametersPipe(Pipe pipe, JObject parameterConfiguration)
         {
             // Pipe parameters
-            string startBoven = (string)parameterConfiguration["parameters"]["pipe"]["property1"];
-            string eindeBoven = (string)parameterConfiguration["parameters"]["pipe"]["property2"];
-            string startCenter = (string)parameterConfiguration["parameters"]["pipe"]["property3"];
-            string eindeCenter = (string)parameterConfiguration["parameters"]["pipe"]["property4"];
-            string startOnder = (string)parameterConfiguration["parameters"]["pipe"]["property5"];
-            string eindeOnder = (string)parameterConfiguration["parameters"]["pipe"]["property6"];
+            string startBoven = (string)parameterConfiguration["parameters"]["pipe"]["property_1"];
+            string eindeBoven = (string)parameterConfiguration["parameters"]["pipe"]["property_2"];
+            string startCenter = (string)parameterConfiguration["parameters"]["pipe"]["property_3"];
+            string eindeCenter = (string)parameterConfiguration["parameters"]["pipe"]["property_4"];
+            string startOnder = (string)parameterConfiguration["parameters"]["pipe"]["property_5"];
+            string eindeOnder = (string)parameterConfiguration["parameters"]["pipe"]["property_6"];
             double startOffset = pipe.get_Parameter(BuiltInParameter.RBS_START_OFFSET_PARAM).AsDouble();
             double eindeOffset = pipe.get_Parameter(BuiltInParameter.RBS_END_OFFSET_PARAM).AsDouble();
             double diameter = pipe.get_Parameter(BuiltInParameter.RBS_PIPE_OUTER_DIAMETER).AsDouble();
