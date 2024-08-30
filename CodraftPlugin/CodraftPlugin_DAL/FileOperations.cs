@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using Autodesk.Revit.DB;
 using Newtonsoft.Json.Linq;
+using System.Data.SqlTypes;
+using System.Net;
 
 namespace CodraftPlugin_DAL
 {
@@ -831,6 +833,31 @@ namespace CodraftPlugin_DAL
             }
 
             return data;
+        }
+
+        public static string GetHoekStandaard(string connectionString, string sqlString, double hoekGetekend)
+        {
+            using (OleDbConnection conn = new OleDbConnection(connectionString))
+            {
+                OleDbCommand command = new OleDbCommand(sqlString, conn);
+
+                conn.Open();
+
+                using (OleDbDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        double hoekDatabase = (double)reader[0];
+
+                        if (hoekDatabase > hoekGetekend)
+                        {
+                            return hoekDatabase.ToString();
+                        }
+                    }
+                }
+            }
+
+            return "";
         }
     }
 }

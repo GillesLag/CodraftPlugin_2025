@@ -2,6 +2,7 @@
 using CodraftPlugin_DAL;
 using CodraftPlugin_Exceptions;
 using CodraftPlugin_UIDatabaseWPF;
+using CodraftPlugin_UIDatabaseWPF.Model;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -25,13 +26,16 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public string StrCountSQL { get; set; }
         public string StrHoekInkortbaarSQL { get; set; }
 
+        private double hoekGetekent;
+
         public Elbow(FamilyInstance elbow, Document doc, string databaseMapPath, string textFilesMapPath, JObject file)
             : base(elbow, doc, databaseMapPath, textFilesMapPath, file)
         {
+            hoekGetekent = elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_19"]["revit"]).AsDouble() * radiansToDegrees;
             this.Nd1 = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_20"]["revit"]).AsDouble() * feetToMm).ToString();
             this.Nd2 = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_21"]["revit"]).AsDouble() * feetToMm).ToString();
             this.HoekTolerantie = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_18"]["revit"]).AsDouble() * radiansToDegrees).ToString();
-            this.Hoek = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_19"]["revit"]).AsDouble() * radiansToDegrees).ToString();
+            this.Hoek = Math.Round(hoekGetekent).ToString();
 
             if (double.Parse(this.Hoek) > 45) this.HoekStandaard = "90";
 
@@ -62,6 +66,14 @@ namespace CodraftPlugin_Updaters.FittingTypes
         {
             if (FileOperations.IsAngleShortenable(StrHoekInkortbaarSQL, ConnectionString))
             {
+                string StrStandaardHoekSql = $"SELECT {(string)parametersConfiguration["parameters"]["elbow"]["property_17"]["database"]}" +
+                $" FROM {(string)parametersConfiguration["parameters"]["elbow"]["property_22"]["database"]}" +
+                $" WHERE {(string)parametersConfiguration["parameters"]["elbow"]["property_20"]["database"]} = {this.Nd1}" +
+                $" AND {(string)parametersConfiguration["parameters"]["elbow"]["property_21"]["database"]} = {this.Nd2}" +
+                $" ORDER BY {(string)parametersConfiguration["parameters"]["elbow"]["property_17"]["database"]}";
+
+                this.HoekStandaard = FileOperations.GetHoekStandaard(ConnectionString, StrStandaardHoekSql, hoekGetekent);
+
                 StrSQL = $"SELECT *" +
                     $" FROM {(string)parametersConfiguration["parameters"]["elbow"]["property_22"]["database"]}" +
                     $" WHERE {(string)parametersConfiguration["parameters"]["elbow"]["property_20"]["database"]} = {this.Nd1}" +
