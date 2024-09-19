@@ -102,7 +102,7 @@ namespace CodraftPlugin_Updaters.FittingTypes
 
             for (int i = 0; i < dbParamsCorrect.Count; i++)
             {
-                if (i < 2)
+                if (i < 3)
                 {
                     if ((double)fittingParams[i] != (double)dbParamsCorrect[i])
                         return false;
