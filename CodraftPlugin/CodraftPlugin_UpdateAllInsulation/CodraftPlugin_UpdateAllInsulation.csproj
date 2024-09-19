@@ -107,6 +107,10 @@
       <Project>{043ed940-1cec-40e5-90ee-2f2e8d06b422}</Project>
       <Name>CodraftPlugin_DAL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CodraftPlugin_Library\CodraftPlugin_Library.csproj">
+      <Project>{68E31E0B-9A82-4630-9AAC-370244C7BF7D}</Project>
+      <Name>CodraftPlugin_Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

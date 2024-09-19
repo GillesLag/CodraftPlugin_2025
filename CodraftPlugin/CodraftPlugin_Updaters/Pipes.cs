@@ -80,6 +80,14 @@ namespace CodraftPlugin_Updaters
                 {
                     // Get pipe element.
                     Pipe pipe = (Pipe)doc.GetElement(pipeId);
+                    pipe.LookupParameter("COD_Isolatie").Set(1);
+                    ElementSettings.SetCodraftParametersPipe(pipe, parameterConfiguration);
+                    string pipeSystemtype = pipe.LookupParameter("System Type").AsValueString();
+
+                    if (pipe.MEPSystem == null)
+                    {
+                        continue;
+                    }
 
                     // Get systemname from pipe
                     string systemName = pipe.Name.Split('%').First();
@@ -87,6 +95,11 @@ namespace CodraftPlugin_Updaters
                     if (systemName.Contains("PI"))
                     {
                         systemName = systemName.Replace("PI", "PIS");
+                    }
+
+                    if (pipeSystemtype == systemName)
+                    {
+                        continue;
                     }
 
                     // Delete pipe if systemname does  not exist.
@@ -110,8 +123,6 @@ namespace CodraftPlugin_Updaters
 
                     // Set all parameters.
                     pipe.SetSystemType(systemIds[systemNames.IndexOf(systemName)]);
-                    ElementSettings.SetCodraftParametersPipe(pipe, parameterConfiguration);
-                    pipe.LookupParameter("COD_Isolatie").Set(1);
                 }
                 catch (Exception ex)
                 {
@@ -127,6 +138,11 @@ namespace CodraftPlugin_Updaters
             {
                 // Get pipe element
                 Pipe pipe = (Pipe)doc.GetElement(pipeId);
+                if (pipe.MEPSystem == null)
+                {
+                    continue;
+                }
+
                 // Get the systemname from the pipe
                 string systemName = pipe.Name.Split('%').First();
 

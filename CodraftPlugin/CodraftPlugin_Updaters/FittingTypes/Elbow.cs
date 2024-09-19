@@ -31,7 +31,7 @@ namespace CodraftPlugin_Updaters.FittingTypes
         public Elbow(FamilyInstance elbow, Document doc, string databaseMapPath, string textFilesMapPath, JObject file)
             : base(elbow, doc, databaseMapPath, textFilesMapPath, file)
         {
-            hoekGetekent = elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_19"]["revit"]).AsDouble() * radiansToDegrees;
+            hoekGetekent = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_19"]["revit"]).AsDouble() * radiansToDegrees);
             this.Nd1 = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_20"]["revit"]).AsDouble() * feetToMm).ToString();
             this.Nd2 = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_21"]["revit"]).AsDouble() * feetToMm).ToString();
             this.HoekTolerantie = Math.Round(elbow.LookupParameter((string)parametersConfiguration["parameters"]["elbow"]["property_18"]["revit"]).AsDouble() * radiansToDegrees).ToString();

@@ -849,7 +849,7 @@ namespace CodraftPlugin_DAL
                     {
                         double hoekDatabase = (double)reader[0];
 
-                        if (hoekDatabase > hoekGetekend)
+                        if (hoekDatabase >= hoekGetekend)
                         {
                             return hoekDatabase.ToString();
                         }

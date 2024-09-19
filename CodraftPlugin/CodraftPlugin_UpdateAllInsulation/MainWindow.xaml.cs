@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,6 +18,7 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Plumbing;
 using Autodesk.Revit.UI;
 using CodraftPlugin_DAL;
+using CodraftPlugin_Library;
 
 namespace CodraftPlugin_UpdateAllInsulation
 {
@@ -32,6 +34,7 @@ namespace CodraftPlugin_UpdateAllInsulation
         private List<PipingSystemType> searchSystemTypes = new List<PipingSystemType>();
         private List<PipingSystemType> allSystemTypes = new List<PipingSystemType>();
         private List<PipingSystemType> systemTypesToUpdate = new List<PipingSystemType>();
+        private string globalParameterName = "RevitProjectMap";
 
         private string connectionString = "Provider = Microsoft.ACE.OLEDB.12.0; Data Source =";
         private string SQLstring;
@@ -43,10 +46,29 @@ namespace CodraftPlugin_UpdateAllInsulation
 
         private void UpdateInsulation_Loaded(object sender, RoutedEventArgs e)
         {
-            string root = doc.PathName;
-            int index = root.LastIndexOf('\\') + 1;
-            string pathDatabase = root.Substring(0, index) + @"\RevitDatabases\Isolatie.accdb";
-            connectionString += pathDatabase;
+            string projectMapPath = string.Empty;
+            ElementId globalParameter = GlobalParametersManager.FindByName(doc, globalParameterName);
+
+            if (globalParameter == ElementId.InvalidElementId)
+            {
+                projectMapPath = GlobalParameters.SetGlobalParameter(doc, globalParameterName);
+            }
+            else
+            {
+                GlobalParameter revitProjectMapParameter = (GlobalParameter)doc.GetElement(globalParameter);
+                projectMapPath = ((StringParameterValue)revitProjectMapParameter.GetValue()).Value;
+            }
+
+            if (projectMapPath.Contains("(user)"))
+            {
+                string username = WindowsIdentity.GetCurrent().Name.Split('\\')[1];
+                projectMapPath = projectMapPath.Replace("(user)", username);
+            }
+
+            string databasesMapPath = projectMapPath + @"\RevitDatabases\";
+            string insulationDatabasePath = databasesMapPath + @"Isolatie.accdb";
+
+            connectionString += insulationDatabasePath;
 
             GetAllSystemTypes(this.doc);
 

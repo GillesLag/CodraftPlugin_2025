@@ -73,7 +73,7 @@ namespace CodraftPlugin_UIDatabaseWPF.Model
             this.Nominale_Diameter_1 = nominaleDiameter1;
             this.Nominale_Diameter_2 = nominaleDiameter2;
             this.Nominale_Diameter_3 = nominaleDiameter3;
-            this.Buitendiameter_3 = buitendiameter1;
+            this.Buitendiameter_1 = buitendiameter1;
             this.Buitendiameter_2 = buitendiameter2;
             this.Buitendiameter_3 = buitendiameter3;
             this.Hoek = hoek;

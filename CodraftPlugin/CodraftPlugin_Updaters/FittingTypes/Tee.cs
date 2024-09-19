@@ -61,8 +61,8 @@ namespace CodraftPlugin_Updaters.FittingTypes
                 {
                     List<object> correctList = new List<object>();
 
-                    correctList.AddRange(parameterList.GetRange(0, 19).Select(x => (object)double.Parse(x)));
-                    correctList.AddRange(parameterList.GetRange(19, 6));
+                    correctList.AddRange(parameterList.GetRange(0, 18).Select(x => (object)double.Parse(x)));
+                    correctList.AddRange(parameterList.GetRange(18, 6));
 
                     return correctList;
                 }
