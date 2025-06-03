@@ -1,69 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0001B25D-BDE7-4D07-9BD9-581B3EE8AB5B}</ProjectGuid>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodraftPlugin_Loading</RootNamespace>
-    <AssemblyName>CodraftPlugin_Loading</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="RevitAPI">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2023\RevitAPI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2025\RevitAPI.dll</HintPath>
     </Reference>
     <Reference Include="RevitAPIUI">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2023\RevitAPIUI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2025\RevitAPIUI.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ButtonHandler.cs" />
-    <Compile Include="ChangeTagColor.cs" />
-    <Compile Include="EnableDisableFittingUpdater.cs" />
-    <Compile Include="EnableDisableInsulationUpdater.cs" />
-    <Compile Include="EnableDisablePipeAccessoryUpdater.cs" />
-    <Compile Include="EnableDisablePipeUpdater.cs" />
-    <Compile Include="HoldClouds.cs" />
-    <Compile Include="JtWindowHandle.cs" />
-    <Compile Include="LoadTabAndButtons.cs" />
-    <Compile Include="OpenUpdateAllInsulation.cs" />
-    <Compile Include="OpstartWerkomgeving.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="OpenFilterElementSelection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\holdCloud.png">
@@ -110,26 +60,19 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodraftPlugin_DAL\CodraftPlugin_DAL.csproj">
-      <Project>{043ed940-1cec-40e5-90ee-2f2e8d06b422}</Project>
-      <Name>CodraftPlugin_DAL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CodraftPlugin_Library\CodraftPlugin_Library.csproj">
-      <Project>{68e31e0b-9a82-4630-9aac-370244c7bf7d}</Project>
-      <Name>CodraftPlugin_Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CodraftPlugin_UpdateAllInsulation\CodraftPlugin_UpdateAllInsulation.csproj">
-      <Project>{edff2001-487e-4715-b1c1-12c5c5aa334d}</Project>
-      <Name>CodraftPlugin_UpdateAllInsulation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CodraftPlugin_Updaters\CodraftPlugin_Updaters.csproj">
-      <Project>{1d78f398-7b45-422b-9fe4-e8681fcf3ae7}</Project>
-      <Name>CodraftPlugin_Updaters</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FilterElementSelection_WPF\FilterElementSelection_WPF.csproj">
-      <Project>{26940a8c-ea2e-4037-be8a-6881ef6a8e93}</Project>
-      <Name>FilterElementSelection_WPF</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\CodraftPlugin_DAL\CodraftPlugin_DAL.csproj" />
+    <ProjectReference Include="..\CodraftPlugin_Library\CodraftPlugin_Library.csproj" />
+    <ProjectReference Include="..\CodraftPlugin_UpdateAllInsulation\CodraftPlugin_UpdateAllInsulation.csproj" />
+    <ProjectReference Include="..\CodraftPlugin_Updaters\CodraftPlugin_Updaters.csproj" />
+    <ProjectReference Include="..\FilterElementSelection_WPF\FilterElementSelection_WPF.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <PackageReference Include="ExcelDataReader" Version="3.7.0" />
+    <PackageReference Include="ExcelDataReader.DataSet" Version="3.7.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="UpdaterManager.cs" />
+  </ItemGroup>
 </Project>

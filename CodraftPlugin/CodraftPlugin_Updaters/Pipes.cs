@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Windows.Forms;
+using TaskDialog = Autodesk.Revit.UI.TaskDialog;
 
 namespace CodraftPlugin_Updaters
 {
@@ -110,7 +111,7 @@ namespace CodraftPlugin_Updaters
                         SendKeys.SendWait("{ESC}");
 
                         // Message for user.
-                        TaskDialog td = new TaskDialog("PipeType of PipingSystem Fout");
+                        Autodesk.Revit.UI.TaskDialog td = new Autodesk.Revit.UI.TaskDialog("PipeType of PipingSystem Fout");
                         td.MainInstruction = "De PipeType naam komt niet overeen met een PipingSystem naam";
                         td.ExpandedContent = "De PipeType naam moet overeenkomen met de PipingSystem naam\n" +
                             "voorbeeld PipeType naam: \'KW_Retour\'.\n" +
@@ -126,7 +127,7 @@ namespace CodraftPlugin_Updaters
                 }
                 catch (Exception ex)
                 {
-                    TaskDialog.Show("Pipe added element error", ex.Message);
+                    Autodesk.Revit.UI.TaskDialog.Show("Pipe added element error", ex.Message);
                     continue;
                 }
             }

@@ -8,6 +8,8 @@ using Autodesk.Revit.DB;
 using Newtonsoft.Json.Linq;
 using System.Data.SqlTypes;
 using System.Net;
+using System.Data.Odbc;
+using System.Diagnostics;
 
 namespace CodraftPlugin_DAL
 {

@@ -25,7 +25,7 @@ namespace CodraftPlugin_Loading
         private string pipeTypeQuery = "SELECT * FROM PipeTypes";
         private string joinSegmentAndSizesQuery = "SELECT * FROM SegmentSize";
         private string insulMaterialQuery = "SELECT * FROM IsolatieMateriaal";
-        private string connection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=\"";
+        private string connection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=";
         private readonly string globalParameterName = "RevitProjectMap";
         private bool fUpdaterChanged = false;
         private bool pUpdaterChanged = false;
@@ -108,7 +108,7 @@ namespace CodraftPlugin_Loading
             {
                 Binding binding = app.Create.NewInstanceBinding(categorySet);
                 BindingMap map = doc.ParameterBindings;
-                map.Insert(item, binding, BuiltInParameterGroup.PG_CONSTRAINTS);
+                map.Insert(item, binding, GroupTypeId.Constraints);
             }
 
             categorySet.Insert(Category.GetCategory(doc, BuiltInCategory.OST_PipeFitting));
@@ -117,7 +117,7 @@ namespace CodraftPlugin_Loading
             {
                 Binding binding = app.Create.NewInstanceBinding(categorySet);
                 BindingMap map = doc.ParameterBindings;
-                map.Insert(item, binding, BuiltInParameterGroup.PG_INSULATION);
+                map.Insert(item, binding, GroupTypeId.Insulation);
             }
             addParameters.Commit();
 

@@ -88,5 +88,29 @@ namespace CodraftPlugin_Library
 
             return fullPath;
         }
+
+        public static string GetGlobalParameter(Document doc, string parameter)
+        {
+            string result = string.Empty;
+            ElementId globalParameter = GlobalParametersManager.FindByName(doc, parameter);
+
+            if (globalParameter == ElementId.InvalidElementId)
+            {
+                result = SetGlobalParameter(doc, parameter);
+            }
+            else
+            {
+                GlobalParameter revitProjectMapParameter = (GlobalParameter)doc.GetElement(globalParameter);
+                result = ((StringParameterValue)revitProjectMapParameter.GetValue()).Value;
+            }
+
+            if (result.Contains("(user)"))
+            {
+                string username = WindowsIdentity.GetCurrent().Name.Split('\\')[1];
+                result = result.Replace("(user)", username);
+            }
+
+            return result;
+        }
     }
 }

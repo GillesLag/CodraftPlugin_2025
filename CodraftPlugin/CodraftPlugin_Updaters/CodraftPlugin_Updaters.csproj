@@ -1,101 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1D78F398-7B45-422B-9FE4-E8681FCF3AE7}</ProjectGuid>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodraftPlugin_Updaters</RootNamespace>
-    <AssemblyName>CodraftPlugin_Updaters</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="RevitAPI">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2023\RevitAPI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2025\RevitAPI.dll</HintPath>
     </Reference>
     <Reference Include="RevitAPIUI">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2023\RevitAPIUI.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files\Autodesk\Revit 2025\RevitAPIUI.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Fittings.cs" />
-    <Compile Include="FittingTypes\BaseFitting.cs" />
-    <Compile Include="FittingTypes\Elbow.cs" />
-    <Compile Include="FittingTypes\Tap.cs" />
-    <Compile Include="FittingTypes\Tee.cs" />
-    <Compile Include="FittingTypes\Transistion.cs" />
-    <Compile Include="Insulation.cs" />
-    <Compile Include="PipeAccessories.cs" />
-    <Compile Include="PipeAccessoriesTypes\BaseAccessory.cs" />
-    <Compile Include="PipeAccessoriesTypes\BalanceValve.cs" />
-    <Compile Include="PipeAccessoriesTypes\ButterflyValve.cs" />
-    <Compile Include="PipeAccessoriesTypes\StraightValve.cs" />
-    <Compile Include="PipeAccessoriesTypes\Strainer.cs" />
-    <Compile Include="PipeAccessoriesTypes\ThreeWayGlobeValve.cs" />
-    <Compile Include="Pipes.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UpdaterManager.cs" />
+    <ProjectReference Include="..\CodraftPlugin_DAL\CodraftPlugin_DAL.csproj" />
+    <ProjectReference Include="..\CodraftPlugin_Exceptions\CodraftPlugin_Exceptions.csproj" />
+    <ProjectReference Include="..\CodraftPlugin_Library\CodraftPlugin_Library.csproj" />
+    <ProjectReference Include="..\CodraftPlugin_PipeAccessoriesWPF\CodraftPlugin_PipeAccessoriesWPF.csproj" />
+    <ProjectReference Include="..\CodraftPlugin_UIDatabaseWPF\CodraftPlugin_UIDatabaseWPF.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodraftPlugin_DAL\CodraftPlugin_DAL.csproj">
-      <Project>{043ed940-1cec-40e5-90ee-2f2e8d06b422}</Project>
-      <Name>CodraftPlugin_DAL</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CodraftPlugin_Exceptions\CodraftPlugin_Exceptions.csproj">
-      <Project>{8c82287f-3a83-40ee-9334-c4aa3a569d4c}</Project>
-      <Name>CodraftPlugin_Exceptions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CodraftPlugin_Library\CodraftPlugin_Library.csproj">
-      <Project>{68e31e0b-9a82-4630-9aac-370244c7bf7d}</Project>
-      <Name>CodraftPlugin_Library</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CodraftPlugin_PipeAccessoriesWPF\CodraftPlugin_PipeAccessoriesWPF.csproj">
-      <Project>{28e4316b-6287-4649-bbd7-5befab05a2b9}</Project>
-      <Name>CodraftPlugin_PipeAccessoriesWPF</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CodraftPlugin_UIDatabaseWPF\CodraftPlugin_UIDatabaseWPF.csproj">
-      <Project>{a08beb93-60f1-45f9-9547-09fe8e8696e6}</Project>
-      <Name>CodraftPlugin_UIDatabaseWPF</Name>
-    </ProjectReference>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Compile Remove="FittingTypes\Fitting.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

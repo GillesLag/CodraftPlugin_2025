@@ -140,6 +140,18 @@ namespace CodraftPlugin_Loading
             PushButton holdCloudbutton = tools.AddItem(holdCloudData) as PushButton;
             holdCloudbutton.ToolTip = "Changes the hold clouds";
             holdCloudbutton.LargeImage = new BitmapImage(new Uri("pack://application:,,,/CodraftPlugin_Loading;component/Resources/holdCloud.png"));
+
+            //Create AddInsulationToPipes button
+            PushButtonData InsulationData = new PushButtonData(
+                "Add Insulation To Pipes",
+                "Add Insulation To Pipes",
+                assemblyPath,
+                "CodraftPlugin_Loading.AddPipeInsulation");
+
+            //add button to ribbon + tooltip and image
+            PushButton InsulationButton = tools.AddItem(InsulationData) as PushButton;
+            InsulationButton.ToolTip = "Add insulation to pipes";
+            InsulationButton.LargeImage = new BitmapImage(new Uri("pack://application:,,,/CodraftPlugin_Loading;component/Resources/InsulationUpdater.png"));
         }
 
         public Result OnShutdown(UIControlledApplication application)
@@ -265,7 +277,7 @@ namespace CodraftPlugin_Loading
         private void ControlledApplication_DocumentCreated(object sender, Autodesk.Revit.DB.Events.DocumentCreatedEventArgs e)
         {
             if (!e.Document.IsFamilyDocument)
-                TaskDialog.Show("Nieuw Project", "Slaag het project eerst op vooraleer je verder gaat.");
+                Autodesk.Revit.UI.TaskDialog.Show("Nieuw Project", "Slaag het project eerst op vooraleer je verder gaat.");
         }
 
         private void ControlledApplication_DocumentSavedAs(object sender, Autodesk.Revit.DB.Events.DocumentSavedAsEventArgs e)
